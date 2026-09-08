@@ -21,27 +21,34 @@ An iOS app that simulates an online banking experience. The app includes essenti
 
 Follow these steps to set up the project on your local machine:
 
+### Requirements
+
+- Xcode with an iOS 17.5 or newer Simulator runtime
+- An internet connection for Swift Package Manager, Firebase Authentication, and Firestore
+
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/your-username/your-repo.git
+    git clone https://github.com/GKObakhidze/BankApp.git
     ```
 
 2. **Navigate into the project directory**:
 
     ```bash
-    cd your-repo
+    cd BankApp
     ```
 
 3. **Open the project in Xcode**:
 
     ```bash
-    open YourProjectName.xcodeproj
+    open EasyBank.xcodeproj
     ```
 
-4. **Build and run the project** in Xcode:
+4. Wait for Xcode to finish resolving the Swift Package dependencies.
 
-    - Select the target device or simulator.
+5. **Build and run the project** in Xcode:
+
+    - Select the `EasyBank` scheme and an iPhone Simulator.
     - Click the `Run` button or press `Cmd + R`.
 
 ## Usage

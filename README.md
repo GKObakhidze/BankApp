@@ -84,7 +84,3 @@ We welcome contributions to enhance the project. To contribute:
 ## License
 
 This project is licensed under the MIT License.
-
-## Contact
-
-For questions or suggestions, please contact [Zuka Papuashvili](mailto:Zurabpapuashvili@gmail.com).

@@ -9,7 +9,9 @@ results = Path('test-results')
 results.mkdir(exist_ok=True)
 udid = os.environ['SIMULATOR_UDID']
 subprocess.run(['xcrun', 'simctl', 'boot', udid], check=True)
-subprocess.run(['xcrun', 'simctl', 'bootstatus', udid, '-b'], check=True, timeout=180)
+subprocess.run(['xcrun', 'simctl', 'bootstatus', udid, '-b'], check=True, timeout=300)
+subprocess.run(['open', '-a', 'Simulator', '--args', '-CurrentDeviceUDID', udid], check=True)
+subprocess.run(['xcrun', 'simctl', 'io', udid, 'screenshot', str(results / 'simulator-ready.png')], check=True, timeout=120)
 
 recorder = None
 tests = None
@@ -30,12 +32,12 @@ with (results / 'recording.log').open('w') as recording_log:
              '--mask=ignored', str(results / 'simulator-recording.mov')],
             stdout=recording_log, stderr=subprocess.STDOUT,
         )
-        deadline = time.monotonic() + 30
+        deadline = time.monotonic() + 120
         while 'Recording started' not in (results / 'recording.log').read_text():
             if recorder.poll() is not None:
                 raise RuntimeError('Simulator recorder exited. See recording.log.')
             if time.monotonic() > deadline:
-                raise TimeoutError('Simulator recording did not start within 30 seconds.')
+                raise TimeoutError('Simulator recording did not start within 120 seconds.')
             time.sleep(0.2)
 
         command = [
@@ -46,7 +48,7 @@ with (results / 'recording.log').open('w') as recording_log:
             '-only-testing:EasyBankUITests',
             '-resultBundlePath', str(results / 'EasyBank.xcresult'),
             '-derivedDataPath', 'build/DerivedData',
-            '-disableAutomaticPackageResolution', 'CODE_SIGNING_ALLOWED=NO',
+            '-disableAutomaticPackageResolution', 'CODE_SIGNING_ALLOWED=YES', 'CODE_SIGN_IDENTITY=-', 'DEVELOPMENT_TEAM=',
         ]
         with (results / 'xcodebuild.log').open('w') as test_log:
             tests = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -67,7 +69,7 @@ with (results / 'recording.log').open('w') as recording_log:
             if recorder.poll() is None:
                 recorder.send_signal(signal.SIGINT)
                 try:
-                    recorder.wait(timeout=45)
+                    recorder.wait(timeout=120)
                 except subprocess.TimeoutExpired:
                     recorder.kill()
                     recorder.wait()

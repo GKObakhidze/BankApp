@@ -70,7 +70,7 @@ jobs:
             -only-testing:EasyBankUITests \
             -derivedDataPath build/DerivedData \
             -disableAutomaticPackageResolution \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= \
             2>&1 | tee test-results/build.log
 
       - name: Run UI tests and record the simulator

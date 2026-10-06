@@ -1,0 +1,83 @@
+name: iOS UI Tests
+
+on:
+  push:
+    branches:
+      - codex/ios-actions-trial
+      - 'UITests/**'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-ui-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ui-tests:
+    name: EasyBank on iPhone Simulator
+    runs-on: macos-15
+    timeout-minutes: 35
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Download the project
+        uses: actions/checkout@v4
+
+      - name: Select an available iPhone
+        id: simulator
+        run: |
+          mkdir -p test-results
+          xcodebuild -version
+          xcrun simctl list devices available --json > test-results/devices.json
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          devices = json.loads(Path('test-results/devices.json').read_text())['devices']
+          runtime = 'com.apple.CoreSimulator.SimRuntime.iOS-18-5'
+          iphones = [d for d in devices.get(runtime, []) if d.get('isAvailable') and d['name'].startswith('iPhone')]
+          if not iphones:
+              raise SystemExit('No iOS 18.5 iPhone is installed on this runner. See devices.json.')
+          device = sorted(iphones, key=lambda d: d['name'])[0]
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f"udid={device['udid']}\n")
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write(f"## iOS UI Tests\n\nDevice: **{device['name']}**, iOS 18.5, Xcode 16.4.\n\n")
+          print(f"Selected {device['name']} ({device['udid']})")
+          PY
+
+      - name: Build the app and run UI tests
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project EasyBank.xcodeproj \
+            -scheme EasyBank \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}' \
+            -destination-timeout 180 \
+            -parallel-testing-enabled NO \
+            -only-testing:EasyBankUITests \
+            -resultBundlePath test-results/EasyBank.xcresult \
+            -derivedDataPath build/DerivedData \
+            -disableAutomaticPackageResolution \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee test-results/xcodebuild.log
+
+      - name: Prepare readable results and screenshots
+        if: always()
+        run: python3 scripts/ci/export-results.py
+
+      - name: Save test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ui-test-results-${{ github.run_number }}
+          path: test-results/
+          if-no-files-found: warn
+          retention-days: 7

@@ -52,10 +52,15 @@ jobs:
           print(f"Selected {device['name']} ({device['udid']})")
           PY
 
-      - name: Build the app and run UI tests
+      - name: Install video tools
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
+        run: brew install ffmpeg
+
+      - name: Build the app and tests
         run: |
           set -o pipefail
-          xcodebuild test \
+          xcodebuild build-for-testing \
             -project EasyBank.xcodeproj \
             -scheme EasyBank \
             -configuration Debug \
@@ -63,11 +68,33 @@ jobs:
             -destination-timeout 180 \
             -parallel-testing-enabled NO \
             -only-testing:EasyBankUITests \
-            -resultBundlePath test-results/EasyBank.xcresult \
             -derivedDataPath build/DerivedData \
             -disableAutomaticPackageResolution \
             CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tee test-results/xcodebuild.log
+            2>&1 | tee test-results/build.log
+
+      - name: Run UI tests and record the simulator
+        env:
+          SIMULATOR_UDID: ${{ steps.simulator.outputs.udid }}
+        run: python3 scripts/ci/record-tests.py
+
+      - name: Convert video for Windows
+        if: always()
+        run: |
+          if [ -s test-results/simulator-recording.mov ]; then
+            ffmpeg -hide_banner -loglevel warning -y \
+              -i test-results/simulator-recording.mov \
+              -vf 'scale=720:1280:force_original_aspect_ratio=decrease:force_divisible_by=2' \
+              -c:v libx264 -profile:v main -level:v 3.1 -pix_fmt yuv420p -r 30 \
+              -movflags +faststart -an test-results/ui-tests.mp4
+            ffprobe -v error -show_entries stream=codec_name,profile,pix_fmt,width,height,r_frame_rate:format=format_name,duration,size \
+              -of json test-results/ui-tests.mp4 > test-results/video-info.json
+            ffmpeg -hide_banner -v error -i test-results/ui-tests.mp4 -f null -
+            rm test-results/simulator-recording.mov
+          else
+            echo "No video was recorded. Check the build/test and recording logs." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
 
       - name: Prepare readable results and screenshots
         if: always()

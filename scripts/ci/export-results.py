@@ -46,9 +46,14 @@ else:
 lines += [
     'Download the **ios-ui-test-results** artifact below and unzip it.',
     'Open `report.md` in a text editor. Screenshots, when captured, are in `attachments/`.',
-    '`xcodebuild.log` contains build and test diagnostics. The `.xcresult` bundle requires Xcode for its graphical viewer.', '',
+    '`build.log` and `xcodebuild.log` contain build and test diagnostics. The `.xcresult` bundle requires Xcode for its graphical viewer.', '',
     'The starter tests only check basic app launch/navigation. A passing starter run does not complete the assignment.', '',
 ]
+video = results / 'ui-tests.mp4'
+if video.exists():
+    lines += ['### Test video', '',
+              'Open **ui-tests.mp4** after unzipping the artifact. The file is MP4 with H.264 video, suitable for Windows Media Player and VLC.',
+              'The recording is silent. It shows simulator screens during the tests, without a touch/cursor overlay.', '']
 report = '\n'.join(lines)
 (results / 'report.md').write_text(report, encoding='utf-8')
 if os.environ.get('GITHUB_STEP_SUMMARY'):

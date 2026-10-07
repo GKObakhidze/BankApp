@@ -47,7 +47,7 @@ lines += [
     'Download the **ios-ui-test-results** artifact below and unzip it.',
     'Open `report.md` in a text editor. Screenshots, when captured, are in `attachments/`.',
     '`build.log` and `xcodebuild.log` contain build and test diagnostics. The `.xcresult` bundle requires Xcode for its graphical viewer.', '',
-    'The starter tests only check basic app launch. A passing starter run does not complete the assignment.', '',
+    'The starter has one test: BankingFlowTests/testAppLaunch(). Replace it with your three scenario tests; a passing starter run does not complete the assignment.', '',
 ]
 video = results / 'ui-tests.mp4'
 if video.exists():

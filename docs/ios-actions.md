@@ -2,7 +2,7 @@
 
 This workflow runs the existing `EasyBankUITests` target on a GitHub-hosted Mac with Xcode 16.4 and an iOS 18.5 iPhone Simulator. Your computer only needs an editor, Git and a browser. There is no interactive simulator window in GitHub Actions.
 
-The starter tests exercise app launch only. A green run does not mean the three assignment scenarios have been implemented, or that the assignment scenarios have been verified.
+The starter runs exactly one test: `BankingFlowTests/testAppLaunch()`. It checks app launch only. Replace this method with three separate assignment tests in `BankingFlowTests.swift`; a passing starter run does not complete the assignment.
 
 ## Run the tests
 
@@ -52,7 +52,7 @@ The workflow uploads reports for seven days. Reports are produced even when a te
 
 The shared `EasyBank` scheme asks Xcode to record each UI test and keep recordings for passing and failing tests. The workflow exports those recordings from the `.xcresult` bundle and converts them to Windows-compatible MP4. It does not use a separate background simulator recorder.
 
-Open `ui-tests.mp4` for the combined recording, or use `videos.md` to choose a clip in `videos/`. Clips correspond to individual test executions, including separate appearance configurations. Simulator setup before a test is omitted. Test launches and relaunches can still appear.
+Open `ui-tests.mp4` for the combined recording, or use `videos.md` to choose a clip in `videos/`. Clips correspond to individual test executions, without automatic Light/Dark repeats in the starter. Simulator setup before a test is omitted. Test launches and relaunches can still appear.
 
 The final files use H.264 Main profile, 8-bit YUV 4:2:0, 30 fps and a 720 × 1280 frame. This avoids relying on HEVC extensions on Windows. Every converted clip and the combined video are decoded as a validation step. Codec details are saved in `video-info.json`. Recordings are silent; Xcode's interactive timeline overlays are not part of the exported video.
 
@@ -63,3 +63,7 @@ This is a recording available after the run, not a live remote simulator or an e
 ## Class capacity and waiting
 
 Each student must run the workflow under **their own `YOUR_USERNAME/BankApp` → Actions**, in a public fork owned by their own GitHub account. After a successful run, open a PR into `GKObakhidze/BankApp` → `main`, include that fork run's link, and request mentor review where available. Adding a reviewer does not move the fork's runs onto the mentor's account. Signing in with a personal account alone is not enough: the repository running the workflow must be the student's fork. Additional pull request checks in the teaching repository use the teaching account's shared capacity and may queue independently. For current account limits, public/private billing, queue behavior and this project's timeout, see [the Georgian limits section](../README.md#actions-limits). Do not assume that 35 students clicking Run workflow will all receive a runner at exactly the same time.
+
+## Target, class and method
+
+`EasyBankUITests` is the test target selected by `-only-testing:EasyBankUITests`, not a class name. The synchronized `EasyBankUITests/` folder supplies its Swift files. `BankingFlowTests.swift` contains the `BankingFlowTests` class; each `test…` method in that class is a test. Keep the target and workflow unchanged. Replace the one starter method with the three assignment scenarios; keep Page and Steps as helpers. See [the Georgian explanation](../README.md#assignment).

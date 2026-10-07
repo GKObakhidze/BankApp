@@ -1,6 +1,6 @@
 # EasyBank — UI reference for Windows students
 
-Use this reference with [the Windows running guide](ios-actions-trial.md). You can read the screenshots, element inventory and UI tree extracts in VS Code or a browser. They provide the inspection information needed for the assignment; implement your own Page, Steps and Tests classes.
+Use this reference with [the Windows running guide](ios-actions.md). You can read the screenshots, element inventory and UI tree extracts in VS Code or a browser. They provide the inspection information needed for the assignment; implement your own Page, Steps and Tests classes.
 
 The reference covers onboarding, email/password login, registration, Home and logout. Money transfers, card management, currencies and social login are outside this assignment.
 

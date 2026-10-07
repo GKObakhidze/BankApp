@@ -1,98 +1,327 @@
-# Online Banking App Simulation
+# EasyBank — iOS UI ტესტირების დავალება
 
-![AppMockup](https://github.com/papulik/EasyBank/assets/63560236/269b3bc6-1d7c-4645-b339-b1563b759ba7)
+ამ დავალებაში დაწერთ iOS აპლიკაციის ავტომატიზებულ UI ტესტებს **Swift / XCUITest**-ით და გამოიყენებთ **Page Object Model**-ს. რეპოზიტორიას ჰქვია **BankApp**, ხოლო Xcode-ის პროექტსა და აპს — **EasyBank**.
 
-An iOS app that simulates an online banking experience. The app includes essential banking features such as user login, registration, money transfers, card management, transaction history, and currency conversion.
+**Windows-ზეც შეგიძლიათ დავალების შესრულება:** ტესტებს დაწერთ VS Code-ში, GitHub Actions კი მათ GitHub-ის Mac-ზე, iPhone-ის სიმულატორში გაუშვებს. დასრულების შემდეგ მიიღებთ ანგარიშს, ლოგებსა და ვიდეოს. Mac-ზე შეგიძლიათ გამოიყენოთ Xcode ან იგივე GitHub Actions პროცესი.
 
-## Features
+> **პროექტის საწყისი ბრენჩია `main`.** შექმენით საკუთარი სამუშაო ბრენჩი განახლებული `main`-იდან და დავალების Pull Request-იც `main`-ზე მიმართეთ.
 
-- **Login Screen**: Secure login for existing users.
-- **Registration Screen**: Sign up for new users.
-- **Home Page**: 
-  - **Send Money**: Transfer money from one user to another.
-  - **Card Management**: 
-    - **Horizontal Collection View**: Display all current cards.
-    - **Edit Cards**: Edit existing cards.
-    - **Add/Delete Cards**: Add new cards or delete existing ones.
-  - **Transaction History**: View a detailed history of all transactions in a table view.
-  - **Daily Currency List**: Currencies with a detailed list and search functionality.
+## სარჩევი
 
-## Local training mode
+1. [საჭირო დოკუმენტები და ფაილები](#documents)
+2. [რა უნდა გქონდეთ დაყენებული](#requirements)
+3. [საკუთარი ასლისა და სამუშაო ბრენჩის შექმნა](#setup)
+4. [პროექტის გახსნა Windows-ზე ან Mac-ზე](#editor)
+5. [რა ტესტები უნდა დაწეროთ](#assignment)
+6. [ცვლილებების GitHub-ზე ატვირთვა](#push)
+7. [Actions-იდან ხელით გაშვება](#manual-run)
+8. [შედეგების, ვიდეოსა და შეცდომების ნახვა](#results)
+9. [დავალების ჩაბარება](#submission)
+10. [ხშირი პრობლემები](#troubleshooting)
 
-The app starts in local training mode by default. Registration, login, logout, account/card data and transfers use storage on that simulator. No Firebase service is contacted for these flows. Currency rates are fixed samples, not live financial data.
+<a id="documents"></a>
+## 1. სად არის საჭირო დოკუმენტები
 
-Create your own test account; there is no shared test login. Accounts remain after logout/relaunch but are removed when the app's data is deleted. Every fresh GitHub runner starts without these accounts. Use only fictional test credentials. This is a teaching simulation, not a production authentication or banking service.
+პროექტის ჩამოტვირთვის შემდეგ ყველაფერი ქვემოთ მოცემულ ფაილებშია. GitHub-ზე ბმულს დააჭირეთ; VS Code-ში იგივე ფაილი მარცხენა **Explorer**-დან გახსენით. Markdown-ის ფორმატირებული ვერსიის სანახავად გამოიყენეთ **Open Preview** — Windows-ზე `Ctrl + Shift + V`, Mac-ზე `Cmd + Shift + V`.
 
-The original backend path remains available to maintainers with the `--use-live-services` launch argument, but its Firestore permissions currently prevent registration. Do not use that option for the assignment.
+| ფაილი ან საქაღალდე | რისთვის გჭირდებათ |
+| --- | --- |
+| [README.md](README.md) | ეს სრული ქართული ინსტრუქცია: დავალება, მომზადება, გაშვება და ჩაბარება. |
+| [docs/ios-element-reference.md](docs/ios-element-reference.md) | ეკრანები და ელემენტების ცნობარი: ტიპები, იდენტიფიკატორები, წარწერები და UI-ის სტრუქტურის ბმულები. ტესტების წერისას პირველ რიგში აქ ჩაიხედეთ. |
+| [docs/reference/screens/](docs/reference/screens/) | აპიდან გადაღებული შვიდი ეკრანი: საწყისი გვერდი, შესვლა, ორი შეცდომის მდგომარეობა, რეგისტრაცია, Home და გამოსვლის დასტური. |
+| [docs/reference/hierarchy/](docs/reference/hierarchy/) | იმავე ეკრანების UI-ის სტრუქტურა ტექსტურ ფაილებში. ჩანს ელემენტების ტიპები, იდენტიფიკატორები და წარწერები. |
+| [docs/ios-actions.md](docs/ios-actions.md) | დამატებითი ინგლისურენოვანი ცნობარი Windows-ის გაშვებისა და ვიდეოს შესახებ. |
+| [EasyBankUITests/](EasyBankUITests/) | აქ წერეთ თქვენი ტესტები, Page და Steps კლასები. |
+| [EasyBank.xcodeproj](EasyBank.xcodeproj/) | პროექტი, რომელსაც Mac-ზე Xcode-ით გახსნით. |
+| [.github/workflows/ios-ui-tests.yml](.github/workflows/ios-ui-tests.yml) | გამზადებული GitHub Actions workflow. დავალების შესასრულებლად მისი შეცვლა საჭირო არ არის. |
 
-## UI testing on Windows (pilot)
+ცნობარში **Identifier** არის ელემენტის `accessibilityIdentifier`, **Label / placeholder** — წარწერა ან ველის მინიშნება, **Type** — ელემენტის ტიპი. იდენტიფიკატორებში დიდი და პატარა ასო განსხვავდება. UI-ის ტექსტური ამონაწერის ჩაღრმავებები ელემენტების ურთიერთმდებარეობას აჩვენებს; კოორდინატები და ელემენტების რიგითობა ლოკატორად არ გამოიყენოთ.
 
-Start with the [Windows running guide](docs/ios-actions-trial.md) and the [screen and element reference](docs/ios-element-reference.md). This setup currently lives on `codex/ios-actions-trial`.
+Windows-ზე ცოცხალი სიმულატორი ან Accessibility Inspector არ გჭირდებათ. ელემენტებს მოცემული ცნობარით გაეცნობით. მზა სცენარების კოდი ცნობარში არ არის — ლოკატორები, მოქმედებები, მოლოდინები და შემოწმებები თქვენ უნდა დაწეროთ.
 
-## Installation
+<a id="requirements"></a>
+## 2. რა დაგჭირდებათ
 
-Follow these steps to set up the project on your local machine:
+| Windows | Mac |
+| --- | --- |
+| GitHub-ის ანგარიში | GitHub-ის ანგარიში |
+| Git და VS Code | Git და Xcode, თუ ტესტებს ადგილობრივადაც გაუშვებთ |
+| ბრაუზერი და ინტერნეტი | iPhone Simulator, iOS 17.5 ან უფრო ახალი ვერსიით; ინტერნეტი პაკეტების ჩამოსატვირთად |
 
-### Requirements
+Windows-ზე Xcode-ის ან iOS Simulator-ის დაყენებას ნუ ეცდებით: პროექტს GitHub-ის Mac ააწყობს და გაუშვებს. GitHub-ით გაშვებისთვის Apple Developer-ის ანგარიში და ხელმოწერის სერტიფიკატები არ გჭირდებათ. VS Code-ის შეტყობინებები საბოლოო პასუხი არ არის — Swift კოდის აწყობის შედეგს Actions-ში ნახავთ.
 
-- Xcode with an iOS 17.5 or newer Simulator runtime
-- An internet connection for downloading Swift packages and using GitHub Actions
+აპი ავტომატურად იყენებს **ლოკალურ სასწავლო რეჟიმს**. რეგისტრაცია და შესვლა Firebase-ზე დამოკიდებული აღარ არის. შექმენით გამოგონილი სატესტო ანგარიში. ის იმავე აპის ინსტალაციაში გამოსვლისა და ხელახალი გახსნის შემდეგაც ინახება, მაგრამ ახალი GitHub გაშვება სუფთა გარემოში იწყება. ავტორიზაციის სესია აპის ხელახალი გაშვებისას თავიდან იწყება. მესამე სცენარში ანგარიში თავად ტესტმა უნდა შექმნას და შემდეგ იმავე მონაცემებით შევიდეს.
 
-1. **Clone the repository**:
+ახლად შექმნილ ანგარიშზე ნულოვანი ბალანსი და ცარიელი ტრანზაქციების სია მოსალოდნელია. ვალუტის კურსები სასწავლო მაგალითებია. გადარიცხვები, ბარათების მართვა და სოციალური ავტორიზაცია ამ დავალების სცენარებში არ შედის.
 
-    ```bash
-    git clone https://github.com/GKObakhidze/BankApp.git
-    ```
+<a id="setup"></a>
+## 3. შექმენით საკუთარი ასლი და სამუშაო ბრენჩი
 
-2. **Navigate into the project directory**:
+### 3.1. Fork — რეპოზიტორიის ასლი თქვენს ანგარიშზე
 
-    ```bash
-    cd BankApp
-    ```
+1. შედით GitHub-ზე და გახსენით [GKObakhidze/BankApp](https://github.com/GKObakhidze/BankApp).
+2. დააჭირეთ **Fork → Create a new fork**. მფლობელად აირჩიეთ თქვენი ანგარიში და შექმენით fork.
+3. გადაამოწმეთ, რომ გვერდის ზედა ნაწილში ჩანს **თქვენი მომხმარებლის სახელი / BankApp**.
+4. საკუთარ fork-ში გახსენით **Actions** და, თუ გამოჩნდა მოთხოვნა, ჩართეთ workflows — **I understand my workflows, go ahead and enable them**.
 
-3. **Open the project in Xcode**:
+ქვემოთ მოცემული ჩამოტვირთვის გზა იმ შემთხვევაშიც მუშაობს, თუ fork-ის შექმნისას მხოლოდ `main` დაკოპირდა.
 
-    ```bash
-    open EasyBank.xcodeproj
-    ```
+### 3.2. ჩამოტვირთვა და სამუშაო ბრენჩი
 
-4. Wait for Xcode to finish resolving the Swift Package dependencies.
+Windows-ზე გახსენით PowerShell ან Git Bash, Mac-ზე — Terminal. გადადით საქაღალდეში, სადაც პროექტის შენახვა გსურთ, შემდეგ შეასრულეთ:
 
-5. **Build and run the project** in Xcode:
+```bash
+git clone https://github.com/YOUR_USERNAME/BankApp.git
+cd BankApp
+git remote add upstream https://github.com/GKObakhidze/BankApp.git
+git fetch upstream main
+git switch -c UITests/firstname-bankapp upstream/main
+```
 
-    - Select the `EasyBank` scheme and an iPhone Simulator.
-    - Click the `Run` button or press `Cmd + R`.
+- `YOUR_USERNAME` შეცვალეთ თქვენი GitHub მომხმარებლის სახელით.
+- `firstname` შეცვალეთ თქვენი სახელით, პატარა ლათინური ასოებით. მაგალითად: `UITests/nino-bankapp`. იგივე სახელი გამოიყენეთ ყველა მომდევნო ნაბიჯშიც.
+- `origin` არის თქვენი fork — ცვლილებები აქ უნდა ატვირთოთ.
+- `upstream` არის მენტორის რეპოზიტორია — საწყის პროექტს აქედან იღებთ.
+- შეინარჩუნეთ `UITests/` პრეფიქსი: ამ ბრენჩებზე ატვირთვა ტესტებს ავტომატურადაც უშვებს.
 
-## Usage
+შეამოწმეთ ბრენჩი და მისამართები:
 
-### Login
+```bash
+git branch --show-current
+git remote -v
+```
 
-1. Open the app.
-2. Enter your credentials and tap `Login`.
+ბრენჩი უნდა იყოს `UITests/თქვენისახელი-bankapp`, ხოლო `origin` — თქვენი GitHub მისამართი. თუ პროექტი უკვე ჩამოტვირთული გაქვთ, მეორედ ნუ დააკლონავთ: იმუშავეთ არსებულ საქაღალდეში. უკვე დამატებული `upstream`-ის ხელახლა დამატებაც საჭირო არ არის.
 
-### Register
+### 3.3. პირველად ატვირთეთ სამუშაო ბრენჩი
 
-1. Tap `Register` on the login screen.
-2. Fill in the registration details and tap `Sign Up`.
+საწყისი ვერსიის შესამოწმებლად ტესტების დაწერამდე შეგიძლიათ გამოაქვეყნოთ ბრენჩი:
 
-### Home Page
+```bash
+git push -u origin UITests/firstname-bankapp
+```
 
-- **Send Money**: Tap on `Send Money`, fill in the recipient details and amount, then tap `Send`.
-- **Edit Card**: Tap on a card in the collection view, make necessary changes, and save.
-- **Add/Delete Card**: Use the `Add` button to add a new card or swipe left on a card to delete it.
-- **Transaction History**: Scroll through the list of transactions to view details.
-- **Currency Converter**: Tap on the `Currency Converter` to convert currencies and search for specific currencies.
+ეს თქვენს fork-ში სამუშაო ბრენჩს შექმნის და, თუ Actions ჩართულია, საწყის ტესტებს ავტომატურად გაუშვებს. ჯერ კიდევ მხოლოდ საწყისი ტესტების წარმატება თქვენს დავალებას არ ასრულებს.
 
-## Contributing
+<a id="editor"></a>
+## 4. გახსენით პროექტი
 
-We welcome contributions to enhance the project. To contribute:
+### Windows — VS Code
 
-1. Fork the repository.
-2. Create a new branch for your feature: `git checkout -b feature-name`.
-3. Make your changes and commit them: `git commit -m 'Add some feature'`.
-4. Push to the branch: `git push origin feature-name`.
-5. Open a pull request.
+1. VS Code-ში აირჩიეთ **File → Open Folder** და გახსენით ჩამოტვირთული `BankApp` საქაღალდე.
+2. გახსენით ეს `README.md` და [ელემენტების ცნობარი](docs/ios-element-reference.md).
+3. ტესტების ფაილები მოძებნეთ `EasyBankUITests/` საქაღალდეში.
+4. Git ბრძანებებისთვის შეგიძლიათ გამოიყენოთ **Terminal → New Terminal**. ტერმინალი უნდა იყოს `BankApp` საქაღალდეში.
+5. ტესტები დაწერეთ Swift-ზე. მათ GitHub Actions-ში გაუშვებთ, როგორც ქვემოთაა აღწერილი.
 
-## License
+თუ ტერმინალში `code .` მუშაობს, პროექტის საქაღალდიდან VS Code-ის გახსნა ამ ბრძანებითაც შეგიძლიათ.
 
-This project is licensed under the MIT License.
+### Mac — Xcode
+
+1. გახსენით `EasyBank.xcodeproj`.
+2. დაელოდეთ Swift Package-ების ჩამოტვირთვასა და დამუშავებას.
+3. აირჩიეთ **EasyBank** scheme და iPhone Simulator, iOS 17.5 ან უფრო ახალი სისტემით.
+4. აპის გასახსნელად გამოიყენეთ **Product → Run** ან `Cmd + R`.
+5. ტესტებისთვის გამოიყენეთ **Product → Test** ან `Cmd + U`. Test Navigator-ში ნახეთ `EasyBankUITests`-ის შედეგები.
+6. ახალი სატესტო ფაილები შეინახეთ `EasyBankUITests/` საქაღალდეში. პროექტში ეს საქაღალდე სინქრონიზებულია და იქ დამატებული Swift ფაილები UI ტესტების target-ში შედის.
+
+GitHub-ზე მიმდინარე გამშვები იყენებს Xcode 16.4-სა და iOS 18.5-ის iPhone Simulator-ს. ცნობარის სურათები iOS 26.5-ზეა გადაღებული, ამიტომ სისტემური დიალოგები და კლავიატურის იერსახე შეიძლება განსხვავდებოდეს. ელემენტების მოსაძებნად ცნობარში მითითებული იდენტიფიკატორები და წარწერები გამოიყენეთ.
+
+<a id="assignment"></a>
+## 5. რა უნდა დაწეროთ
+
+### კოდის ორგანიზება
+
+გამოიყენეთ Page Object Model და პასუხისმგებლობები გამოყავით:
+
+| ფაილი | პასუხისმგებლობა |
+| --- | --- |
+| `BaseClass.swift` | საერთო მომზადება და აპის გაშვება. |
+| `EasyBankPage.swift` | ეკრანის ელემენტების ლოკატორები. არსებული `PageClasss.swift` ფაილი და `PageClasss` კლასი გადაარქვით; გამოყენების ადგილებიც განაახლეთ. |
+| `EasyBankSteps.swift` | თქვენ მიერ დამატებული კლასი განმეორებადი მოქმედებებისა და შემოწმებებისთვის. |
+| `EasyBankUITests.swift` | სამი დამოუკიდებელი ტესტი ქვემოთ მოცემული სცენარებისთვის. |
+
+აპის სამუშაო კოდი `EasyBank/`-შია, თქვენი დავალების კოდი კი `EasyBankUITests/`-ში დაწერეთ. არსებული `testExample` და `EasyBankUITestsLaunchTests` საწყისი მაგალითებია და მოთხოვნილ სამ სცენარს ვერ ჩაანაცვლებს.
+
+### სცენარი 1 — არასწორი ელფოსტის ფორმატი
+
+1. საწყის ეკრანზე დააჭირეთ **Log In**.
+2. შეიყვანეთ არასწორი ფორმატის ელფოსტა, მაგალითად `invalid-email`.
+3. შეიყვანეთ არაცარიელი პაროლი.
+4. შესვლის ფორმაში დააჭირეთ **Log In**.
+5. შეამოწმეთ, რომ ჩანს შეცდომა და მის ტექსტში არის `badly formatted`.
+
+### სცენარი 2 — არასწორი ავტორიზაციის მონაცემები
+
+1. საწყის ეკრანზე დააჭირეთ **Log In**.
+2. შეიყვანეთ სწორი ფორმატის, მაგრამ დაურეგისტრირებელი ელფოსტა.
+3. შეიყვანეთ არაცარიელი პაროლი.
+4. დააჭირეთ **Log In**.
+5. შეამოწმეთ, რომ ჩანს ავტორიზაციის შეცდომა და მისი ტექსტი შეიცავს `malformed or has expired`.
+
+შეამოწმეთ მოთხოვნილი ფრაგმენტები და არა შეცდომის სრული წინადადება ან პუნქტუაცია.
+
+### სცენარი 3 — რეგისტრაცია, გამოსვლა და ხელახლა შესვლა
+
+1. საწყის ეკრანზე დააჭირეთ **Register**.
+2. ყოველ გაშვებაზე შექმენით უნიკალური სატესტო ელფოსტა.
+3. **Password** და **Repeat Password** ველებში შეიყვანეთ ერთი და იგივე ძლიერი სატესტო პაროლი; რეგისტრაციის მინიმუმია ექვსი სიმბოლო.
+4. დააჭირეთ **Register**.
+5. შეამოწმეთ მთავარ ეკრანზე გადასვლა, მაგალითად **Home** ჩანართის ან **Send Money** ღილაკის არსებობით.
+6. დააჭირეთ ზედა მარჯვენა კუთხის გამოსვლის ღილაკს და **Logging Out** დიალოგში აირჩიეთ **Yes**.
+7. გახსნილ შესვლის ფორმაში გამოიყენეთ ამავე ტესტში შექმნილი ელფოსტა და პაროლი.
+8. შეამოწმეთ მთავარ ეკრანზე ხელახლა გადასვლა.
+
+ზოგ iOS ვერსიაზე რეგისტრაციის პაროლის ველზე ჩნდება სისტემური **Use Strong Password?** შეთავაზება. თუ გამოჩნდა, დახურეთ **Close**-ით და შემდეგ შეიყვანეთ სატესტო პაროლი. ამ მდგომარეობის აღწერა [ცნობარის რეგისტრაციის ნაწილშია](docs/ios-element-reference.md#3-registration).
+
+### საერთო მოთხოვნები
+
+- სამივე სცენარი ცალკე ტესტი უნდა იყოს და სხვა ტესტის შესრულებაზე არ იყოს დამოკიდებული.
+- დაელოდეთ საჭირო ელემენტს `waitForExistence(timeout:)`-ით ან XCTest-ის მოლოდინებით; ფიქსირებული `sleep()` არ გამოიყენოთ.
+- რეგისტრაციის მონაცემები შექმენით ტესტში. სხვა გაშვების ან სხვა სტუდენტის ანგარიშს ნუ დაეყრდნობით.
+- გამოიყენეთ გამოგონილი მონაცემები და არა პირადი ელფოსტა/პაროლი.
+- შეამოწმეთ შედეგი და არა მხოლოდ ღილაკზე დაჭერა.
+- ლოკატორები, მოქმედებები და სცენარები შესაბამის კლასებში გაანაწილეთ.
+
+<a id="push"></a>
+## 6. შეინახეთ და ატვირთეთ ცვლილებები
+
+GitHub მხოლოდ ატვირთულ კოდს გაუშვებს. VS Code-ში ან Xcode-ში ჯერ შეინახეთ ფაილები, შემდეგ პროექტის ტერმინალში შეასრულეთ:
+
+```bash
+git status
+git diff
+git add EasyBankUITests
+git commit -m "Add EasyBank UI tests"
+git push origin UITests/firstname-bankapp
+```
+
+`git status`-ით ნახავთ შეცვლილ ფაილებს, `git diff`-ით — ცვლილებებს. ზემოთ მოცემული `git add` ტესტების საქაღალდეს ამატებს კომიტში. თუ შეგნებულად სხვა საჭირო ფაილიც შეცვალეთ, ისიც ცალკე დაამატეთ და გადაამოწმეთ. პირველი ატვირთვისას გამოიყენეთ წინა ნაწილში მოცემული `-u` პარამეტრი.
+
+GitHub-მა შეიძლება შესვლა მოგთხოვოთ — გაიარეთ თქვენი ანგარიშის ავტორიზაცია. თუ Git ავტორის სახელსა და ელფოსტას ითხოვს, პროექტისთვის მიუთითეთ თქვენი სახელი და GitHub-ის ელფოსტა ან თქვენი ანგარიშის `noreply` მისამართი, შემდეგ გაიმეორეთ commit.
+
+ყოველი ახალი push `UITests/…` ბრენჩზე ავტომატურ გაშვებას იწყებს. თუ ის უკვე მიმდინარეობს, იმავე კოდზე ხელით მეორე გაშვება საჭირო არ არის: ამ workflow-ში ახალი გაშვება იმავე ბრენჩის წინა მიმდინარე გაშვებას აუქმებს.
+
+<a id="manual-run"></a>
+## 7. როგორ გაუშვათ ხელით Actions-იდან
+
+### 7.1. ერთხელ მოამზადეთ საკუთარი fork
+
+Workflow უკვე `main`-ზეა. ახალი fork-ის შექმნისას ისიც გადმოგყვებათ; **Default branch დატოვეთ `main`** — სამუშაო ბრენჩზე შეცვლა საჭირო არ არის. ხელით გაშვებისას კონკრეტულ სამუშაო ბრენჩს ცალკე აირჩევთ. GitHub-ის პირობაა, რომ workflow ფაილი ნაგულისხმევ ბრენჩშიც არსებობდეს: [ხელით გაშვების დოკუმენტაცია](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow).
+
+1. საკუთარ fork-ში გახსენით **Actions** და ჩართეთ workflows, თუ GitHub ამას გთხოვთ.
+2. თუ fork ადრე შექმენით, **Code** გვერდზე აირჩიეთ `main`, შემდეგ **Sync fork → Update branch**. ასე თქვენს fork-ის `main`-ზეც გადავა გამზადებული workflow. კონფლიქტის შემთხვევაში მიმართეთ მენტორს. [Fork-ის განახლების ინსტრუქცია](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/syncing-a-fork).
+3. გადაამოწმეთ, რომ თქვენს fork-ის `main`-ში არის `.github/workflows/ios-ui-tests.yml` და თქვენი `UITests/firstname-bankapp` ბრენჩიც ატვირთულია.
+
+თუ ადრე fork-ის Default branch სამუშაო ბრენჩზე გადაიყვანეთ, საკუთარ **Settings → General → Default branch**-ში აირჩიეთ `main` და დაადასტურეთ ცვლილება. ეს მხოლოდ თქვენი fork-ის პარამეტრია.
+
+### 7.2. ახალი გაშვება — Run workflow
+
+1. GitHub-ზე გახსენით **თქვენი fork-ის** **Actions** ჩანართი.
+2. მარცხენა სიიდან აირჩიეთ **iOS UI Tests**.
+3. დააჭირეთ **Run workflow**.
+4. ბრენჩის ჩამოსაშლელ სიაში აირჩიეთ **თქვენი `UITests/firstname-bankapp`**.
+5. დააჭირეთ გახსნილ მენიუში **Run workflow**-ს. დამატებითი მონაცემების შევსება ამ workflow-ს არ სჭირდება.
+6. განაახლეთ გაშვებების სია და გახსენით ახალი ჩანაწერი. გადაამოწმეთ ბრენჩი და კომიტი, რომ სწორედ თქვენი ბოლო ატვირთული კოდი გაეშვა.
+7. გახსენით **EasyBank on iPhone Simulator** და დაელოდეთ დასრულებას.
+
+### 7.3. იგივე კოდის გამეორება — Re-run all jobs
+
+უკვე დასრულებული გაშვება გახსენით და აირჩიეთ **Re-run all jobs**, შემდეგ დაადასტურეთ. ეს იმავე კომიტის ხელახალი შემოწმებაა. თუ კოდი შეცვალეთ, ჯერ ახალი commit/push გააკეთეთ; ძველი გაშვების გამეორება ახალ ცვლილებებს არ აიღებს.
+
+| მოქმედება | რომელი კოდი გაეშვება |
+| --- | --- |
+| ახალ კომიტზე `git push` | ბრენჩზე ახლად ატვირთული კოდი; ამ პროექტში ავტომატურად იწყება. |
+| **Run workflow** | არჩეული ბრენჩის იმ მომენტში ბოლო ატვირთული კომიტი. |
+| ძველ გაშვებაზე **Re-run all jobs** | ზუსტად იმ ძველი გაშვების კომიტი. |
+
+<a id="results"></a>
+## 8. როგორ ნახოთ შედეგი და ვიდეო
+
+### მიმდინარე ეტაპები
+
+გაშვების გვერდზე გახსენით **EasyBank on iPhone Simulator**. მთავარ ეტაპებს ასეთი სახელები აქვს:
+
+| ეტაპი | რას აკეთებს |
+| --- | --- |
+| **Build the app and tests** | აწყობს აპსა და თქვენს ტესტებს. კოდის სინტაქსისა და კომპილაციის შეცდომები აქ გამოჩნდება. |
+| **Run UI tests with Xcode video recording** | უშვებს ტესტებს სიმულატორზე და იწერს ვიდეოს. |
+| **Prepare readable results and screenshots** | ამზადებს ანგარიშსა და ხელმისაწვდომ სურათებს. |
+| **Export test videos for Windows** | ჩანაწერს გარდაქმნის Windows-თან თავსებად MP4-ად. |
+| **Save test results** | ინახავს ჩამოსატვირთ შედეგებს — არტეფაქტს. |
+
+**Queued** რიგში ყოფნას ნიშნავს, **In progress** — მიმდინარე გაშვებას, **Success** — წარმატებას, **Failure** — შეცდომას, **Cancelled** — გაუქმებას. სიმულატორის მომზადებას რამდენიმე წუთი შეიძლება დასჭირდეს. ლოგებში წინსვლა ნახეთ; მხოლოდ ხანგრძლივი გაშვების გამო ახალი გაშვება ნუ დაიწყებთ.
+
+### ანგარიშისა და ვიდეოს ჩამოტვირთვა
+
+1. დაელოდეთ გაშვების დასრულებას და დაბრუნდით მის საერთო გვერდზე — **Summary**.
+2. ნახეთ ტესტების შედეგების ცხრილი.
+3. ქვემოთ, **Artifacts** ნაწილში, დააჭირეთ **ios-ui-test-results-ნომერი**-ს.
+4. ჩამოტვირთული ZIP ამოარქივეთ ცალკე საქაღალდეში.
+5. გახსენით საჭირო ფაილი ქვემოთ მოცემული ცხრილის მიხედვით.
+
+| არტეფაქტში არსებული ფაილი | როგორ გამოიყენოთ |
+| --- | --- |
+| `report.md` | საერთო შედეგი, ტესტების რაოდენობა და შეცდომები, თუ იყო. გახსენით VS Code-ის Preview-ში ან ტექსტურ რედაქტორში. |
+| `xcodebuild.log` | ტესტების სახელები, შესრულების ნაბიჯები და ჩავარდნის მიზეზები. აქ გადაამოწმეთ, რომ თქვენი სამივე სცენარი ნამდვილად შესრულდა. |
+| `build.log` | აპისა და ტესტების აწყობის ლოგი; კომპილაციის შეცდომებისთვის დაიწყეთ აქედან. |
+| `ui-tests.mp4` | ტესტების გაერთიანებული ვიდეო. გახსენით Windows Media Player-ში ან VLC-ში. |
+| `videos.md` და `videos/` | ცალკეული სატესტო გაშვებების ვიდეოების სია და ფაილები. |
+| `attachments/` | ტესტებიდან ექსპორტირებული დანართები, მათ შორის სურათები, როცა ისინი გადაღებულია. |
+| `summary.json` | ტესტების შედეგების სტრუქტურირებული მონაცემები. |
+| `EasyBank.xcresult` | Xcode-ის სრული ანგარიში Mac-ისთვის. Windows-ზე გამოიყენეთ ზემოთ ჩამოთვლილი ტექსტური ფაილები და MP4. |
+
+ვიდეო არის **MP4 / H.264**, Windows-თან თავსებადი ფორმატით. იგი უხმოა; დაჭერის სპეციალური ნიშნები არ ემატება. ჩანს ეკრანები და მათზე ტესტის მოქმედებების შედეგი. დასაწყისში აპის გახსნამდე შეიძლება სიმულატორის საწყისი ეკრანიც გამოჩნდეს. ეს დასრულების შემდეგ სანახავი ჩანაწერია; GitHub Actions ცოცხალ, სამართავ სიმულატორის ფანჯარას არ გაძლევთ.
+
+არტეფაქტები ამ workflow-ში **შვიდი დღით** ინახება — საჭირო ანგარიში და ვიდეო დროულად ჩამოტვირთეთ. თუ ბილდი ჩავარდა, ვიდეო და ტესტის ანგარიში შეიძლება არ შეიქმნას; ასეთ დროს შეამოწმეთ `build.log` და Actions-ის წითელი ეტაპი.
+
+**მწვანე სტატუსი თავისთავად დავალების ჩაბარებას არ ნიშნავს.** დარწმუნდით, რომ შესრულებულია თქვენი სამივე სცენარი და არა მხოლოდ საწყისი `testExample`/`testLaunch`. საწყისი launch ტესტი სხვადასხვა UI კონფიგურაციაშიც შეიძლება შესრულდეს, ამიტომ მხოლოდ ჯამურ რაოდენობას ნუ დაეყრდნობით — ტესტების სახელებიც ნახეთ.
+
+<a id="submission"></a>
+## 9. როგორ ჩააბაროთ
+
+1. დაასრულეთ სამივე დამოუკიდებელი სცენარი და ატვირთეთ თქვენს `UITests/firstname-bankapp` ბრენჩზე.
+2. მიიღეთ წარმატებული გაშვება ბოლო კომიტზე. ანგარიშსა და ლოგში გადაამოწმეთ სამივე სცენარი.
+3. GitHub-ზე შექმენით **Pull Request** თქვენი fork-იდან მენტორის რეპოზიტორიაში. საჭიროებისას გამოიყენეთ **compare across forks**.
+4. მიუთითეთ შემდეგი მხარეები:
+
+   | ველი | მნიშვნელობა |
+   | --- | --- |
+   | **base repository** | `GKObakhidze/BankApp` |
+   | **base branch** | `main` |
+   | **head repository** | თქვენი `YOUR_USERNAME/BankApp` |
+   | **compare branch** | თქვენი `UITests/firstname-bankapp` |
+
+5. **Files changed**-ში გადაამოწმეთ, რომ ჩანს მხოლოდ თქვენი დავალების ცვლილებები. თუ მთელი სასწავლო ინფრასტრუქტურის ცვლილებებიც ჩანს, ჯერ base branch შეამოწმეთ.
+6. PR-ის აღწერაში მიუთითეთ შესრულებული სამი სცენარი და ბოლო წარმატებული Actions გაშვების ბმული. ბმული აიღეთ კონკრეტული გაშვების გვერდის მისამართიდან.
+7. reviewers-ში დაამატეთ მენტორები და `GKObakhidze`, თუ მათი არჩევა ხელმისაწვდომია; წინააღმდეგ შემთხვევაში PR-ის ბმული გადასცით მენტორს შეთანხმებული არხით.
+
+### ჩაბარებამდე გადაამოწმეთ
+
+- [ ] პროექტი წარმატებით აიწყო.
+- [ ] სამივე მოთხოვნილი სცენარი ცალკე ტესტად შესრულდა და გაიარა.
+- [ ] Page, Steps და Tests პასუხისმგებლობები გამიჯნულია.
+- [ ] ტესტები არ ეყრდნობა ფიქსირებულ დაყოვნებას ან შესრულების რიგს.
+- [ ] რეგისტრაციის მონაცემები უნიკალურია და პირად მონაცემებს არ შეიცავს.
+- [ ] PR სწორ რეპოზიტორიასა და ბრენჩზეა მიმართული.
+- [ ] PR-ში დამატებულია ბოლო კომიტის წარმატებული Actions გაშვების ბმული.
+
+<a id="troubleshooting"></a>
+## 10. თუ რამე არ მუშაობს
+
+| პრობლემა | რა შეამოწმოთ |
+| --- | --- |
+| ახალ დოკუმენტებს ან workflow-ს ვერ ვხედავ | GitHub-ის **Code** გვერდზე სწორი ბრენჩი აირჩიეთ. ადგილობრივად ნახეთ `git branch --show-current`. მიმდინარე ვერსიისთვის გამოიყენეთ ამ README-ის მე-3 ნაწილის ბრენჩი. |
+| **Run workflow** არ ჩანს | შედით საკუთარ fork-ში; ჩართეთ Actions; მარცხნივ აირჩიეთ **iOS UI Tests**; ძველი fork-ის შემთხვევაში მე-7 ნაწილის მიხედვით განაახლეთ მისი `main` და გადაამოწმეთ workflow ფაილის არსებობა. |
+| მენტორის რეპოზიტორიაში **Run workflow**-ს ვერ ვიყენებ | სტუდენტებმა ტესტები საკუთარ fork-ში უნდა გაუშვან. შეამოწმეთ, რომ გვერდის მფლობელი თქვენი GitHub ანგარიშია. |
+| push-ის შემდეგ არაფერი გაეშვა | Actions უნდა იყოს ჩართული თქვენს fork-ში, ბრენჩი იწყებოდეს ზუსტად `UITests/`-ით და შეიცავდეს `.github/workflows/ios-ui-tests.yml`-ს. |
+| ახალ კოდს ვერ ვხედავ შედეგში | შეინახეთ ფაილები, გააკეთეთ commit/push და შეამოწმეთ გაშვების კომიტი. ძველი **Re-run** ახალ კოდს არ იყენებს. |
+| აწყობა წითელია | გახსენით **Build the app and tests** ან `build.log`; მოძებნეთ `error:` და მითითებული ფაილი/სტრიქონი. გაასწორეთ, დააკომიტეთ და ატვირთეთ. |
+| ტესტი ელემენტს ვერ პოულობს | შეადარეთ ტიპი, იდენტიფიკატორი და წარწერა ცნობარს; გადაამოწმეთ ეკრანი, ელემენტის გამოჩენის მოლოდინი, კლავიატურა და სისტემური დიალოგი. |
+| რეგისტრაცია ამბობს, რომ ელფოსტა დაკავებულია | გამოიყენეთ ახალი უნიკალური ელფოსტა. ლოკალურ სიმულატორში წინა რეგისტრაციის ანგარიში შეიძლება უკვე ინახებოდეს. |
+| ვიდეო ან **Artifacts** არ ჩანს | დაელოდეთ დასრულებას, გახსენით გაშვების **Summary** და ნახეთ **Save test results**. ბილდის ჩავარდნისას მხოლოდ ლოგები შეიძლება იყოს; შვიდი დღის შემდეგ არტეფაქტი იშლება. |
+| ტესტები მწვანეა, მაგრამ ვიდეოს ექსპორტი წითელია | სრული გაშვება ჯერ წარმატებული არ არის. ნახეთ **Export test videos for Windows**-ის ლოგი და გაუგზავნეთ მენტორს გაშვების ბმული. |
+| ატვირთვა GitHub-ზე არ მიშვებს | `git remote -v`-ით გადაამოწმეთ, რომ `origin` თქვენი fork-ია და ავტორიზაცია თქვენი ანგარიშით გაქვთ გავლილი. |
+| არსებული სამუშაო ბრენჩის შექმნა ვერ ხერხდება | თუ ის უკვე შექმენით, ხელახლა `git switch -c` არ გაუშვათ; გადადით მასზე `git switch UITests/firstname-bankapp`-ით. |
+
+დახმარების მოთხოვნისას მენტორს გაუზიარეთ **კონკრეტული Actions გაშვების ბმული**, შეცდომის ეტაპი და შესაბამისი შეტყობინება. ასე გასაგები იქნება, რომელი ბრენჩი და კომიტი შემოწმდა.

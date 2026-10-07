@@ -3,7 +3,7 @@ name: iOS UI Tests
 on:
   push:
     branches:
-      - codex/ios-actions-trial
+      - main
       - 'UITests/**'
   pull_request:
     branches: [main]

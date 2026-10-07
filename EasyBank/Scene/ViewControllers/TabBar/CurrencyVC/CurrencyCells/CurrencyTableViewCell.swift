@@ -76,7 +76,9 @@ class CurrencyTableViewCell: UITableViewCell {
         currencyCodeLabel.text = currency.code
         currencyNameLabel.text = currency.name
         currencyRateLabel.text = "$ \(String(format: "%.3f", currency.rate))"
-        if let url = URL(string: currency.iconURL) {
+        if AppEnvironment.isTraining {
+            currencyImageView.image = UIImage(systemName: "dollarsign.circle")
+        } else if let url = URL(string: currency.iconURL) {
             currencyImageView.loadImage(from: url, placeholder: UIImage(named: "georgia"))
         }
     }

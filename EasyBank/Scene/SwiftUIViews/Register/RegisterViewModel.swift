@@ -35,6 +35,17 @@ class RegisterViewModel: ObservableObject {
         validateRepeatPassword()
 
         if isEmailValid && isPasswordValid && isRepeatPasswordValid {
+            if AppEnvironment.isTraining {
+                do {
+                    try TrainingStore.shared.register(email: email, password: password)
+                    self.registrationError = nil
+                    completion(true)
+                } catch {
+                    self.registrationError = error.localizedDescription
+                    completion(false)
+                }
+                return
+            }
             Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
                 if let error = error {
                     self.registrationError = error.localizedDescription

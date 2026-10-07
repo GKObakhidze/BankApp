@@ -22,6 +22,7 @@ class OnBoardingVC: UIViewController {
     
     private lazy var loginButton: UIButton = {
         let button = UIButton(type: .system)
+        button.accessibilityIdentifier = "onboarding.login"
         button.setTitle("Log In", for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
         button.layer.borderWidth = 1
@@ -36,6 +37,7 @@ class OnBoardingVC: UIViewController {
     
     private lazy var registerButton: UIButton = {
         let button = UIButton(type: .system)
+        button.accessibilityIdentifier = "onboarding.register"
         button.setTitle("Register", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue

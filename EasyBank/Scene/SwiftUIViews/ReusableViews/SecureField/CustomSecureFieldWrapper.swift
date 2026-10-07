@@ -11,9 +11,11 @@ struct CustomSecureFieldWrapper: UIViewRepresentable {
     @Binding var text: String
     var placeholder: String
     var isValid: Bool
+    var accessibilityIdentifier: String? = nil
 
     func makeUIView(context: Context) -> CustomSecureUITextField {
         let textField = CustomSecureUITextField()
+        textField.accessibilityIdentifier = accessibilityIdentifier
         textField.placeholder = placeholder
         textField.text = text
         textField.delegate = context.coordinator
@@ -22,7 +24,10 @@ struct CustomSecureFieldWrapper: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: CustomSecureUITextField, context: Context) {
-        uiView.text = text
+        uiView.accessibilityIdentifier = accessibilityIdentifier
+        if uiView.text != text {
+            uiView.text = text
+        }
         uiView.isValid = isValid
     }
 

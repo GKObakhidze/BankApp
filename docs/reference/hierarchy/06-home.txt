@@ -1,0 +1,116 @@
+Captured from XCUIApplication.debugDescription on iPhone 17 Pro, iOS 26.5.
+Memory addresses, process IDs, coordinates and query metadata omitted.
+Use identifiers/types/labels; indentation shows the captured containment.
+
+ →Application, label: 'EasyBank'
+    Window (Main)
+      Other
+        Other
+          Other
+            NavigationBar, identifier: 'EasyBank.TabBar'
+            Other
+              Other
+                Other
+                  Other
+                    Other
+                      Other
+                        NavigationBar, identifier: 'Home'
+                          StaticText, label: 'Home'
+                          Button, identifier: 'home.logout', label: 'Log Out'
+                        Other
+                          Other
+                            Other
+                              ScrollView
+                                Other
+                                  Other
+                                    CollectionView
+                                      Cell
+                                        Other
+                                          Image, identifier: 'UnionLogo'
+                                          StaticText, label: 'Visa'
+                                          StaticText, label: 'id: 9F51FA32-40DA-4E4C-AA64-9CB627BAC440'
+                                          StaticText, label: '0.00'
+                                      Other, label: 'Vertical scroll bar, 1 page', value: 0%
+                                        Other
+                                      Other, label: 'Vertical scroll bar, 1 page', value: 0%
+                                        Other
+                                  Button, identifier: 'home.sendMoney', label: 'Send Money'
+                                    StaticText, label: 'Send Money'
+                                  Other
+                                    Table, label: 'Empty list'
+                                      Other, label: 'Vertical scroll bar, 1 page', value: 0%
+                                        Other
+                                      Other, label: 'Horizontal scroll bar, 1 page', value: 0%
+                                        Other
+                                    StaticText, label: 'No transactions yet'
+                                  CollectionView
+                                    Cell
+                                      Image, identifier: 'contacts1'
+                                      StaticText, label: 'Alice'
+                                    Cell
+                                      Image, identifier: 'contacts2'
+                                      StaticText, label: 'Bob'
+                                    Cell
+                                      Image, identifier: 'contacts3'
+                                      StaticText, label: 'Eve'
+                                    Cell
+                                      Image, identifier: 'contacts4'
+                                      StaticText, label: 'Charlie'
+                                    Cell
+                                      Image, identifier: 'contacts5'
+                                      StaticText, label: 'Billy'
+                                    Cell
+                                      Image, identifier: 'contacts6'
+                                      StaticText, label: 'Nick'
+                                    Other, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                      Other
+                                    Other, label: 'Horizontal scroll bar, 2 pages', value: 0%
+                                      Other
+                                    Other, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                      Other
+                                    Other, label: 'Horizontal scroll bar, 2 pages', value: 0%
+                                      Other
+                                Other, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                  Other
+                                Other, label: 'Horizontal scroll bar, 1 page', value: 0%
+                                  Other
+                                Other, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                  Other
+                                Other, label: 'Horizontal scroll bar, 1 page', value: 0%
+                                  Other
+                        Other
+                          Other
+                  Other
+                    Other
+                      TabBar, label: 'Tab Bar'
+                        Other
+                          Other
+                          Other
+                            Button, label: 'Home', Selected
+                              Image, identifier: 'house.fill', label: 'home'
+                            Button, label: 'Cards'
+                              Image, identifier: 'creditcard.fill', label: 'card'
+                            Button, label: 'Currencies'
+                              Image, identifier: 'dollarsign.circle.fill', label: 'dollarsign.circle.fill'
+                          Other
+                            Other
+                              Other
+                              Other
+                                Other
+                                  Other
+                                    Other
+                                  Other
+                                Other
+                    Other
+                      Other
+                        Other
+                          Other
+                            Other
+                              Other
+                          Other
+                            Other
+            Other
+              Other
+    Window
+      Other
+        Other

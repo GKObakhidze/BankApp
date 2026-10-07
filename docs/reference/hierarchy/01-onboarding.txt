@@ -1,0 +1,38 @@
+Captured from XCUIApplication.debugDescription on iPhone 17 Pro, iOS 26.5.
+Memory addresses, process IDs, coordinates and query metadata omitted.
+Use identifiers/types/labels; indentation shows the captured containment.
+
+ →Application, label: 'EasyBank'
+    Window (Main)
+      Other
+        Other
+          Other
+            NavigationBar, identifier: 'EasyBank.OnBoardingVC'
+            Other
+              Other
+                Other
+                  Other
+                    ScrollView
+                      Other
+                        Other
+                      Other
+                        Other
+                          Other
+                            Image, identifier: 'OnboardingImage1'
+                            StaticText, label: 'Trust Easy Bank'
+                            StaticText, label: 'Free advisory service, mobile banking application, visa debit card'
+                      Other
+                        Other
+                          Other
+                            Other
+                          Other
+                            Other
+                            Other
+                  PageIndicator, value: page 1 of 4
+                  Other
+                    Button, identifier: 'onboarding.login', label: 'Log In'
+                      StaticText, label: 'Log In'
+                    Button, identifier: 'onboarding.register', label: 'Register'
+                      StaticText, label: 'Register'
+            Other
+              Other

@@ -35,6 +35,15 @@ final class HomeViewModel {
     }
 
     func fetchCurrentUser() {
+        if AppEnvironment.isTraining {
+            guard let user = TrainingStore.shared.currentUser else { return }
+            currentUser = user
+            cardIds = user.cards.map { $0.id }
+            delegate?.didFetchCurrentUser(user)
+            fetchUsers()
+            fetchTransactions()
+            return
+        }
         guard let userId = Auth.auth().currentUser?.uid else { return }
         userListener = Firestore.firestore().collection("users").document(userId).addSnapshotListener { [weak self] documentSnapshot, error in
             guard let self = self else { return }
@@ -63,7 +72,7 @@ final class HomeViewModel {
     }
     
     func refreshCurrentUser() {
-        guard (Auth.auth().currentUser?.uid) != nil else { return }
+        if !AppEnvironment.isTraining && Auth.auth().currentUser == nil { return }
         FirestoreService.shared.getCurrentUser { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -154,6 +163,11 @@ final class HomeViewModel {
     }
 
     func logout() {
+        if AppEnvironment.isTraining {
+            TrainingStore.shared.logout()
+            delegate?.didLogout(success: true)
+            return
+        }
         do {
             try Auth.auth().signOut()
             DispatchQueue.main.async {
@@ -167,6 +181,12 @@ final class HomeViewModel {
     }
     
     func fetchCards(completion: @escaping ([Card]) -> Void) {
+        if AppEnvironment.isTraining {
+            let cards = TrainingStore.shared.currentUser?.cards ?? []
+            cardIds = cards.map { $0.id }
+            completion(cards)
+            return
+        }
         guard let userId = Auth.auth().currentUser?.uid else { return }
         Firestore.firestore().collection("users").document(userId).getDocument { [weak self] documentSnapshot, error in
             if let error = error {

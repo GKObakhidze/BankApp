@@ -22,20 +22,36 @@ struct RegisterView: View {
         ZStack {
             VStack {
                 header
-                CustomTextFieldWrapper(text: $viewModel.email, placeholder: "Your Email", isValid: viewModel.isEmailValid)
+                CustomTextFieldWrapper(
+                    text: $viewModel.email,
+                    placeholder: "Your Email",
+                    isValid: viewModel.isEmailValid,
+                    accessibilityIdentifier: "registration.email"
+                )
                     .frame(height: 60)
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
-                CustomSecureFieldWrapper(text: $viewModel.password, placeholder: "Password", isValid: viewModel.isPasswordValid)
+                CustomSecureFieldWrapper(
+                    text: $viewModel.password,
+                    placeholder: "Password",
+                    isValid: viewModel.isPasswordValid,
+                    accessibilityIdentifier: "registration.password"
+                )
                     .frame(height: 60)
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
-                CustomSecureFieldWrapper(text: $viewModel.repeatPassword, placeholder: "Repeat Password", isValid: viewModel.isRepeatPasswordValid)
+                CustomSecureFieldWrapper(
+                    text: $viewModel.repeatPassword,
+                    placeholder: "Repeat Password",
+                    isValid: viewModel.isRepeatPasswordValid,
+                    accessibilityIdentifier: "registration.repeatPassword"
+                )
                     .frame(height: 60)
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
                 if let error = viewModel.registrationError {
                     Text(error)
+                        .accessibilityIdentifier("registration.error")
                         .foregroundColor(.red)
                         .padding(.top, 10)
                 }
@@ -51,6 +67,7 @@ struct RegisterView: View {
                         }
                     }
                 })
+                .accessibilityIdentifier("registration.submit")
                 .padding(.top, 20)
                 .padding(.bottom, 30)
             }
@@ -82,6 +99,7 @@ struct RegisterView: View {
                 Text("Sign In")
                     .foregroundColor(.blue)
             }
+            .accessibilityIdentifier("registration.login")
         }
         .padding(.bottom, 20)
         .padding(.top, 20)

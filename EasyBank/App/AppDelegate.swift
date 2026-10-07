@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var coordinator: AppCoordinator?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        FirebaseApp.configure()
+        if !AppEnvironment.isTraining { FirebaseApp.configure() }
 
         let navigationController = UINavigationController()
         coordinator = AppCoordinator(navigationController: navigationController)

@@ -17,6 +17,18 @@ An iOS app that simulates an online banking experience. The app includes essenti
   - **Transaction History**: View a detailed history of all transactions in a table view.
   - **Daily Currency List**: Currencies with a detailed list and search functionality.
 
+## Local training mode
+
+The app starts in local training mode by default. Registration, login, logout, account/card data and transfers use storage on that simulator. No Firebase service is contacted for these flows. Currency rates are fixed samples, not live financial data.
+
+Create your own test account; there is no shared test login. Accounts remain after logout/relaunch but are removed when the app's data is deleted. Every fresh GitHub runner starts without these accounts. Use only fictional test credentials. This is a teaching simulation, not a production authentication or banking service.
+
+The original backend path remains available to maintainers with the `--use-live-services` launch argument, but its Firestore permissions currently prevent registration. Do not use that option for the assignment.
+
+## UI testing on Windows (pilot)
+
+Start with the [Windows running guide](docs/ios-actions-trial.md) and the [screen and element reference](docs/ios-element-reference.md). This setup currently lives on `codex/ios-actions-trial`.
+
 ## Installation
 
 Follow these steps to set up the project on your local machine:
@@ -24,7 +36,7 @@ Follow these steps to set up the project on your local machine:
 ### Requirements
 
 - Xcode with an iOS 17.5 or newer Simulator runtime
-- An internet connection for Swift Package Manager, Firebase Authentication, and Firestore
+- An internet connection for downloading Swift packages and using GitHub Actions
 
 1. **Clone the repository**:
 

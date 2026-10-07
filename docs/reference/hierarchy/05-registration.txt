@@ -1,0 +1,29 @@
+Captured from XCUIApplication.debugDescription on iPhone 17 Pro, iOS 26.5.
+Memory addresses, process IDs, coordinates and query metadata omitted.
+Use identifiers/types/labels; indentation shows the captured containment.
+
+ →Application, label: 'EasyBank'
+    Window (Main)
+      Other
+        Other
+          Other
+            NavigationBar, identifier: '_TtGC7SwiftUI19UIHosting'
+            Other
+              Other
+                Other
+                  Other
+                    StaticText, label: 'Registration Form'
+                    TextField, identifier: 'registration.email', placeholderValue: 'Your Email'
+                    SecureTextField, identifier: 'registration.password', placeholderValue: 'Password'
+                      Button, label: 'hide'
+                    SecureTextField, identifier: 'registration.repeatPassword', placeholderValue: 'Repeat Password'
+                      Button, label: 'hide'
+                    StaticText, label: 'Already have an account?'
+                    Button, identifier: 'registration.login', label: 'Sign In'
+                    StaticText, label: 'By registering, you accept'
+                    Button, label: 'Terms of Use'
+                    StaticText, label: 'and'
+                    Button, label: 'Privacy Policy'
+                    Button, identifier: 'registration.submit', label: 'Register'
+            Other
+              Other

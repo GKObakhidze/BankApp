@@ -46,6 +46,7 @@ final class HomeViewController: UIViewController {
             self?.sendMoneyTapped()
         }
         let button = TabBarsCustomButton(title: "Send Money", action: action)
+        button.accessibilityIdentifier = "home.sendMoney"
         return button
     }()
     
@@ -124,6 +125,8 @@ final class HomeViewController: UIViewController {
         }
         
         let logoutBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.left.square"), style: .plain, target: nil, action: nil)
+        logoutBarButtonItem.accessibilityIdentifier = "home.logout"
+        logoutBarButtonItem.accessibilityLabel = "Log Out"
         logoutBarButtonItem.primaryAction = logoutAction
         navigationItem.rightBarButtonItem = logoutBarButtonItem
     }

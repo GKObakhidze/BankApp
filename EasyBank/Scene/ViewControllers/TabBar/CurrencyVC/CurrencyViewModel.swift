@@ -21,6 +21,13 @@ class CurrencyViewModel {
     var sectionTitles: [String] = []
     
     func fetchCurrencies() {
+        if AppEnvironment.isTraining {
+            allCurrencies = [("USD", 1.0), ("EUR", 0.9), ("GEL", 2.7)].map {
+                Currency(code: $0.0, name: "\(currencyName(for: $0.0)) (sample)", rate: $0.1, iconURL: "")
+            }
+            filterCurrencies(with: "")
+            return
+        }
         let urlString = "\(Constants.API.currencyAPIBaseURL)\(Constants.API.ratesEndpoint)?apikey=\(Constants.API.currencyAPIKey)"
         guard let url = URL(string: urlString) else { return }
         

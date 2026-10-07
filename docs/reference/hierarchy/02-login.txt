@@ -1,0 +1,42 @@
+Captured from XCUIApplication.debugDescription on iPhone 17 Pro, iOS 26.5.
+Memory addresses, process IDs, coordinates and query metadata omitted.
+Use identifiers/types/labels; indentation shows the captured containment.
+
+ →Application, label: 'EasyBank'
+    Window (Main)
+      Other
+        Other
+          Other
+            NavigationBar, identifier: '_TtGC7SwiftUI19UIHosting'
+            Other
+              Other
+                Other
+                  Other
+                    ScrollView
+                      Other
+                        Other
+                      Other
+                      Other
+                        StaticText, label: 'Log In'
+                        TextField, identifier: 'login.email', placeholderValue: 'Your Email'
+                        SecureTextField, identifier: 'login.password', placeholderValue: 'Password'
+                          Button, label: 'hide'
+                        Button, identifier: 'login.submit', label: 'Log In'
+                        StaticText, label: 'Don't have an account?'
+                        Button, identifier: 'login.register', label: 'Sign Up'
+                        StaticText, label: 'OR'
+                        Button, label: 'Continue with Email'
+                          Image, label: 'EmailImage'
+                          StaticText, label: 'Continue with Email'
+                        Button, label: 'Continue with Google'
+                          Image, label: 'GoogleImage'
+                          StaticText, label: 'Continue with Google'
+                        Button, label: 'Continue with Apple'
+                          Image, label: 'AppleImage'
+                          StaticText, label: 'Continue with Apple'
+                      Other, label: 'Vertical scroll bar, 1 page', value: 0%
+                        Other
+                      Other, label: 'Vertical scroll bar, 1 page', value: 0%
+                        Other
+            Other
+              Other

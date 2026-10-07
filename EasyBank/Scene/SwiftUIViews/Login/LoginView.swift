@@ -22,16 +22,27 @@ struct LoginView: View {
                 ScrollView {
                     VStack {
                         header
-                        CustomTextFieldWrapper(text: $viewModel.email, placeholder: "Your Email", isValid: viewModel.isEmailValid)
+                        CustomTextFieldWrapper(
+                            text: $viewModel.email,
+                            placeholder: "Your Email",
+                            isValid: viewModel.isEmailValid,
+                            accessibilityIdentifier: "login.email"
+                        )
                             .frame(height: 60)
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
-                        CustomSecureFieldWrapper(text: $viewModel.password, placeholder: "Password", isValid: viewModel.isPasswordValid)
+                        CustomSecureFieldWrapper(
+                            text: $viewModel.password,
+                            placeholder: "Password",
+                            isValid: viewModel.isPasswordValid,
+                            accessibilityIdentifier: "login.password"
+                        )
                             .frame(height: 60)
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
                         if let error = viewModel.loginError {
                             Text(error)
+                                .accessibilityIdentifier("login.error")
                                 .foregroundColor(.red)
                                 .padding(.top, 10)
                         }
@@ -44,6 +55,7 @@ struct LoginView: View {
                                 }
                             }
                         })
+                        .accessibilityIdentifier("login.submit")
                         .padding(.top, 20)
                         .padding(.bottom, 30)
                         signUpPrompt
@@ -82,6 +94,7 @@ struct LoginView: View {
                 Text("Sign Up")
                     .foregroundColor(.blue)
             }
+            .accessibilityIdentifier("login.register")
             .buttonStyle(BorderlessButtonStyle())
             .clipped()
         }

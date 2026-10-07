@@ -28,6 +28,17 @@ class LoginViewModel: ObservableObject {
         validatePassword()
         
         if isEmailValid && isPasswordValid {
+            if AppEnvironment.isTraining {
+                do {
+                    try TrainingStore.shared.login(email: email, password: password)
+                    self.loginError = nil
+                    completion(true)
+                } catch {
+                    self.loginError = error.localizedDescription
+                    completion(false)
+                }
+                return
+            }
             Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
                 if let error = error {
                     self.loginError = error.localizedDescription

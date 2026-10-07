@@ -12,7 +12,7 @@ import FirebaseAuth
 class FirestoreService {
     static let shared = FirestoreService()
     
-    private let db = Firestore.firestore()
+    private lazy var db = Firestore.firestore()
     private let userDefaults = UserDefaults.standard
     
     private init() {}
@@ -39,6 +39,10 @@ class FirestoreService {
     }
     
     func createUser(uid: String, user: User, completion: @escaping (Result<Void, Error>) -> Void) {
+        if AppEnvironment.isTraining {
+            completion(Result { try TrainingStore.shared.updateUser(user) })
+            return
+        }
         do {
             try db.collection("users").document(uid).setData(from: user) { error in
                 if let error = error {
@@ -54,6 +58,10 @@ class FirestoreService {
     }
     
     func getCurrentUser(completion: @escaping (Result<User, Error>) -> Void) {
+        if AppEnvironment.isTraining {
+            completion(Result { try TrainingStore.shared.requireCurrentUser() })
+            return
+        }
         guard let userId = Auth.auth().currentUser?.uid else { return }
         let docRef = db.collection("users").document(userId)
         
@@ -73,6 +81,10 @@ class FirestoreService {
     }
     
     func getUsers(completion: @escaping (Result<[User], Error>) -> Void) {
+        if AppEnvironment.isTraining {
+            completion(.success(TrainingStore.shared.users))
+            return
+        }
         db.collection("users").getDocuments { querySnapshot, error in
             if let error = error {
                 completion(.failure(error))
@@ -87,6 +99,10 @@ class FirestoreService {
     }
     
     func sendMoney(fromCardId: String, toCardId: String, amount: Double, completion: @escaping (Result<Void, Error>) -> Void) {
+        if AppEnvironment.isTraining {
+            completion(Result { try TrainingStore.shared.sendMoney(fromCardID: fromCardId, toCardID: toCardId, amount: amount) })
+            return
+        }
         print("Initiating sendMoney from \(fromCardId) to \(toCardId) amount \(amount)")
         
         let usersCollection = db.collection("users")
@@ -184,6 +200,10 @@ class FirestoreService {
     }
     
     func getTransactions(forUser userId: String, completion: @escaping (Result<[Transaction], Error>) -> Void) {
+        if AppEnvironment.isTraining {
+            completion(.success(TrainingStore.shared.transactions(for: userId)))
+            return
+        }
         db.collection("transactions")
             .whereField("fromUserId", isEqualTo: userId)
             .getDocuments { [weak self] querySnapshot, error in
@@ -208,6 +228,10 @@ class FirestoreService {
     }
     
     func getUserNames(userIds: [String], completion: @escaping (Result<[String: String], Error>) -> Void) {
+        if AppEnvironment.isTraining {
+            completion(.success(Dictionary(uniqueKeysWithValues: TrainingStore.shared.users.filter { userIds.contains($0.id) }.map { ($0.id, $0.name) })))
+            return
+        }
         guard !userIds.isEmpty else {
             completion(.success([:]))
             return
@@ -240,6 +264,10 @@ class FirestoreService {
     }
     
     func updateCardBalance(forUser userId: String, cardId: String, newBalance: Double, completion: @escaping (Result<Void, Error>) -> Void) {
+        if AppEnvironment.isTraining {
+            completion(Result { try TrainingStore.shared.updateCard(userID: userId, cardID: cardId) { $0.balance = newBalance } })
+            return
+        }
         let userRef = db.collection("users").document(userId)
         userRef.getDocument { document, error in
             if let document = document, document.exists {
@@ -281,6 +309,10 @@ class FirestoreService {
     }
     
     func updateCardDetails(forUser userId: String, cardId: String, newBalance: Double, newExpiryDate: String, newCardHolderName: String, newType: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        if AppEnvironment.isTraining {
+            completion(Result { try TrainingStore.shared.updateCard(userID: userId, cardID: cardId) { $0.balance = newBalance; $0.expiryDate = newExpiryDate; $0.cardHolderName = newCardHolderName; $0.type = newType } })
+            return
+        }
         let userRef = db.collection("users").document(userId)
         userRef.getDocument { document, error in
             if let document = document, document.exists {
@@ -312,6 +344,10 @@ class FirestoreService {
     }
     
     func deleteCard(forUser userId: String, cardId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        if AppEnvironment.isTraining {
+            completion(Result { try TrainingStore.shared.deleteCard(userID: userId, cardID: cardId) })
+            return
+        }
         let userRef = db.collection("users").document(userId)
         userRef.getDocument { document, error in
             if let document = document, document.exists {

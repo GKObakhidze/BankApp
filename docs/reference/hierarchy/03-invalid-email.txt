@@ -1,0 +1,111 @@
+Captured from XCUIApplication.debugDescription on iPhone 17 Pro, iOS 26.5.
+Memory addresses, process IDs, coordinates and query metadata omitted.
+Use identifiers/types/labels; indentation shows the captured containment.
+
+ →Application, label: 'EasyBank'
+    Window (Main)
+      Other
+        Other
+          Other
+            NavigationBar, identifier: '_TtGC7SwiftUI19UIHosting'
+            Other
+              Other
+                Other
+                  Other
+                    ScrollView
+                      Other
+                        Other
+                      Other
+                      Other
+                        StaticText, label: 'Log In'
+                        TextField, identifier: 'login.email', placeholderValue: 'Your Email', value: invalid-email
+                        SecureTextField, identifier: 'login.password', placeholderValue: 'Password', value: •••••••••••••••••••, Keyboard Focused
+                          Button, label: 'hide'
+                        StaticText, identifier: 'login.error', label: 'The email address is badly formatted.'
+                        Button, identifier: 'login.submit', label: 'Log In'
+                        StaticText, label: 'Don't have an account?'
+                        Button, identifier: 'login.register', label: 'Sign Up'
+                        StaticText, label: 'OR'
+                        Button, label: 'Continue with Email'
+                          Image, label: 'EmailImage'
+                          StaticText, label: 'Continue with Email'
+                        Button, label: 'Continue with Google'
+                          Image, label: 'GoogleImage'
+                          StaticText, label: 'Continue with Google'
+                        Button, label: 'Continue with Apple'
+                          Image, label: 'AppleImage'
+                          StaticText, label: 'Continue with Apple'
+                      Other, label: 'Vertical scroll bar, 2 pages', value: 0%
+                        Other
+                      Other, label: 'Vertical scroll bar, 2 pages', value: 0%
+                        Other
+            Other
+              Other
+    Window
+      Other
+        Other
+        Other
+          Other, identifier: 'inputView'
+    Window
+      Other
+        Other
+          Other, identifier: 'SystemInputAssistantView'
+            Other
+              Other, identifier: 'CenterPageView'
+                Other
+                  ScrollView
+                Other
+                  Other, label: 'Typing Predictions'
+                    Other
+                      Other
+                        Button, label: 'Passwords'
+                          Image, identifier: 'kb-autofill-key'
+          Other
+            Other
+              Other
+          Other
+            Keyboard
+              Other
+                Other, identifier: 'UIKeyboardLayoutStar Preview'
+                  Key, label: 'Padding-Left'
+                  Key, label: 'Padding-Right'
+                  Key, label: 'Padding-Left'
+                  Key, label: 'Padding-Right'
+                  Key, label: 'Padding-Left'
+                  Key, label: 'Padding-Right'
+                  Key, label: 'q'
+                  Key, label: 'w'
+                  Key, label: 'e'
+                  Key, label: 'r'
+                  Key, label: 't'
+                  Key, label: 'y'
+                  Key, label: 'u'
+                  Key, label: 'i'
+                  Key, label: 'o'
+                  Key, label: 'p'
+                  Key, label: 'a'
+                  Key, label: 's'
+                  Key, label: 'd'
+                  Key, label: 'f'
+                  Key, label: 'g'
+                  Key, label: 'h'
+                  Key, label: 'j'
+                  Key, label: 'k'
+                  Key, label: 'l'
+                  Button, identifier: 'shift', label: 'shift'
+                  Key, label: 'z'
+                  Key, label: 'x'
+                  Key, label: 'c'
+                  Key, label: 'v'
+                  Key, label: 'b'
+                  Key, label: 'n'
+                  Key, label: 'm'
+                  Key, identifier: 'delete', label: 'delete'
+                  Key, identifier: 'more', label: 'numbers'
+                  Key, identifier: 'space', label: ' '
+                  Button, identifier: 'Return', label: 'return'
+          Other
+            Button, label: 'Next keyboard', value: ქართული ენა
+              StaticText
+            Button, identifier: 'dictation', label: 'Dictate', Disabled
+              StaticText

@@ -32,7 +32,14 @@ class CardsViewModel {
     }
     
     func fetchCards() {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
+        if AppEnvironment.isTraining {
+            currentUser = TrainingStore.shared.currentUser
+            cards = currentUser?.cards ?? []
+            delegate?.didUpdateCards()
+            fetchTransactions()
+            return
+        }
+        guard let userId = (AppEnvironment.isTraining ? TrainingStore.shared.currentUserID : Auth.auth().currentUser?.uid) else { return }
         userListener = Firestore.firestore().collection("users").document(userId).addSnapshotListener { [weak self] documentSnapshot, error in
             guard let self = self else { return }
             if let error = error {
@@ -59,7 +66,7 @@ class CardsViewModel {
     }
     
     func addCard(balance: Double, expiryDate: String, cardHolderName: String, type: String) {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
+        guard let userId = (AppEnvironment.isTraining ? TrainingStore.shared.currentUserID : Auth.auth().currentUser?.uid) else { return }
         let newCard = Card(id: UUID().uuidString, balance: balance, expiryDate: expiryDate, cardHolderName: cardHolderName, type: type)
         
         FirestoreService.shared.getCurrentUser { [weak self] result in
@@ -79,7 +86,6 @@ class CardsViewModel {
                             
                             switch result {
                             case .success:
-                                self?.cards.append(newCard)
                                 self?.delegate?.didUpdateCards()
                             case .failure(let error):
                                 self?.delegate?.didEncounterError(error.localizedDescription)
@@ -94,7 +100,7 @@ class CardsViewModel {
     }
     
     func deleteCard(cardId: String) {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
+        guard let userId = (AppEnvironment.isTraining ? TrainingStore.shared.currentUserID : Auth.auth().currentUser?.uid) else { return }
         FirestoreService.shared.deleteCard(forUser: userId, cardId: cardId) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -109,7 +115,7 @@ class CardsViewModel {
     }
     
     func updateCardDetails(cardId: String, newBalance: Double, newExpiryDate: String, newCardHolderName: String, newType: String) {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
+        guard let userId = (AppEnvironment.isTraining ? TrainingStore.shared.currentUserID : Auth.auth().currentUser?.uid) else { return }
         FirestoreService.shared.updateCardDetails(forUser: userId, cardId: cardId, newBalance: newBalance, newExpiryDate: newExpiryDate, newCardHolderName: newCardHolderName, newType: newType) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -130,6 +136,16 @@ class CardsViewModel {
     
     func fetchTransactions() {
         guard let userId = currentUser?.id else { return }
+        if AppEnvironment.isTraining {
+            transactions = TrainingStore.shared.transactions(for: userId).filter { !($0.fromUserId == userId && $0.toUserId == userId) }.map {
+                var transaction = $0
+                transaction.isIncoming = transaction.toUserId == userId
+                return transaction
+            }
+            sortTransactionsByDate()
+            fetchUserNames(for: transactions)
+            return
+        }
         transactionsListener = Firestore.firestore().collection("transactions")
             .whereField("fromUserId", isEqualTo: userId)
             .addSnapshotListener { [weak self] querySnapshot, error in

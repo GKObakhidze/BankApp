@@ -73,32 +73,30 @@ jobs:
             CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= \
             2>&1 | tee test-results/build.log
 
-      - name: Run UI tests and record the simulator
-        env:
-          SIMULATOR_UDID: ${{ steps.simulator.outputs.udid }}
-        run: python3 scripts/ci/record-tests.py
-
-      - name: Convert video for Windows
-        if: always()
+      - name: Run UI tests with Xcode video recording
         run: |
-          if [ -s test-results/simulator-recording.mov ]; then
-            ffmpeg -hide_banner -loglevel warning -y \
-              -i test-results/simulator-recording.mov \
-              -vf 'scale=720:1280:force_original_aspect_ratio=decrease:force_divisible_by=2' \
-              -c:v libx264 -profile:v main -level:v 3.1 -pix_fmt yuv420p -r 30 \
-              -movflags +faststart -an test-results/ui-tests.mp4
-            ffprobe -v error -show_entries stream=codec_name,profile,pix_fmt,width,height,r_frame_rate:format=format_name,duration,size \
-              -of json test-results/ui-tests.mp4 > test-results/video-info.json
-            ffmpeg -hide_banner -v error -i test-results/ui-tests.mp4 -f null -
-            rm test-results/simulator-recording.mov
-          else
-            echo "No video was recorded. Check the build/test and recording logs." >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
+          set -o pipefail
+          xcodebuild test-without-building \
+            -project EasyBank.xcodeproj \
+            -scheme EasyBank \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}' \
+            -destination-timeout 180 \
+            -parallel-testing-enabled NO \
+            -only-testing:EasyBankUITests \
+            -resultBundlePath test-results/EasyBank.xcresult \
+            -derivedDataPath build/DerivedData \
+            -disableAutomaticPackageResolution \
+            CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= \
+            2>&1 | tee test-results/xcodebuild.log
 
       - name: Prepare readable results and screenshots
         if: always()
         run: python3 scripts/ci/export-results.py
+
+      - name: Export test videos for Windows
+        if: always()
+        run: python3 scripts/ci/export-videos.py
 
       - name: Save test results
         if: always()

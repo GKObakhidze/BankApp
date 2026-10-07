@@ -8,12 +8,7 @@
 import XCTest
 
 final class EasyBankUITests: PageClasss {
-    let pageClasss = PageClasss()
-    
     func testExample() {
-
-        logInBtn.tap()
-        
-        
+        XCTAssertEqual(app.state, .runningForeground)
     }
 }

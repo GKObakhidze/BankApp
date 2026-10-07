@@ -2,7 +2,7 @@
 
 This workflow runs the existing `EasyBankUITests` target on a GitHub-hosted Mac with Xcode 16.4 and an iOS 18.5 iPhone Simulator. Your computer only needs an editor, Git and a browser. There is no interactive simulator window in GitHub Actions.
 
-The starter tests exercise app launch and basic login navigation. A green run does not mean the three assignment scenarios have been implemented, or that the assignment scenarios have been verified.
+The starter tests exercise app launch only. A green run does not mean the three assignment scenarios have been implemented, or that the assignment scenarios have been verified.
 
 ## Run the tests
 
@@ -59,3 +59,7 @@ The final files use H.264 Main profile, 8-bit YUV 4:2:0, 30 fps and a 720 × 128
 The workflow builds with ad-hoc simulator signing; no Apple account or signing certificate is needed. A missing recording causes the video export step to fail instead of silently publishing an empty video. Build failures may only produce logs.
 
 This is a recording available after the run, not a live remote simulator or an element inspector. Use the prepared [screens, identifiers and UI trees](ios-element-reference.md) to identify elements. This Windows assignment assesses test implementation using a supplied UI reference; live element inspection is not required.
+
+## Class capacity and waiting
+
+Each student should run the workflow in a public fork owned by their own GitHub account. Pull request checks in the teaching repository use the teaching account's shared capacity. For current account limits, public/private billing, queue behavior and this project's timeout, see [the Georgian limits section](../README.md#actions-limits). Do not assume that 35 students clicking Run workflow will all receive a runner at exactly the same time.

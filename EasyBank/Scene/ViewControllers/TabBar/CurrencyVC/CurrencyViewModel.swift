@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SimpleNetworking
 
 protocol CurrencyViewModelDelegate: AnyObject {
     func didUpdateCurrencies()
@@ -31,7 +30,15 @@ class CurrencyViewModel {
         let urlString = "\(Constants.API.currencyAPIBaseURL)\(Constants.API.ratesEndpoint)?apikey=\(Constants.API.currencyAPIKey)"
         guard let url = URL(string: urlString) else { return }
         
-        NetworkingService.shared.fetchData(from: url) { (result: Result<CurrencyAPIResponse, Error>) in
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            let result: Result<CurrencyAPIResponse, Error> = Result {
+                if let error = error { throw error }
+                guard let response = response as? HTTPURLResponse,
+                      (200..<300).contains(response.statusCode), let data = data else {
+                    throw URLError(.badServerResponse)
+                }
+                return try JSONDecoder().decode(CurrencyAPIResponse.self, from: data)
+            }
             DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
@@ -44,7 +51,7 @@ class CurrencyViewModel {
                     self.delegate?.didEncounterError(error.localizedDescription)
                 }
             }
-        }
+        }.resume()
     }
     
     func filterCurrencies(with searchText: String) {

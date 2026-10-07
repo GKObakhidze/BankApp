@@ -53,6 +53,9 @@ struct RegisterView: View {
                     Text(error)
                         .accessibilityIdentifier("registration.error")
                         .foregroundColor(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 20)
                         .padding(.top, 10)
                 }
                 signInPrompt

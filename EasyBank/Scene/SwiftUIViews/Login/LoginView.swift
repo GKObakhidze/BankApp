@@ -44,6 +44,9 @@ struct LoginView: View {
                             Text(error)
                                 .accessibilityIdentifier("login.error")
                                 .foregroundColor(.red)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 20)
                                 .padding(.top, 10)
                         }
                         CustomButton(title: "Log In", action: {

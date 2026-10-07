@@ -15,6 +15,7 @@ struct CustomSecureFieldWrapper: UIViewRepresentable {
 
     func makeUIView(context: Context) -> CustomSecureUITextField {
         let textField = CustomSecureUITextField()
+        textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         textField.accessibilityIdentifier = accessibilityIdentifier
         textField.placeholder = placeholder
         textField.text = text

@@ -28,7 +28,7 @@ Use identifiers/types/labels; indentation shows the captured containment.
                                         Other
                                           Image, identifier: 'UnionLogo'
                                           StaticText, label: 'Visa'
-                                          StaticText, label: 'id: 9F51FA32-40DA-4E4C-AA64-9CB627BAC440'
+                                          StaticText, label: 'id: 20D54762-CB42-4FA2-81ED-C028DDC2829A'
                                           StaticText, label: '0.00'
                                       Other, label: 'Vertical scroll bar, 1 page', value: 0%
                                         Other

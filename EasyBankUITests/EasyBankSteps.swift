@@ -158,12 +158,27 @@ class EasyBankSteps {
         tap(field, Constants.screenTimeout)
         dismissStrongPasswordPromptIfShown()
         waitUntilExists(page.keyboard, Constants.screenTimeout)
-        // one character at a time: the registration form re-renders after every change
+        // tap keyboard keys like a user: typeText keeps only one character in the registration form on iOS 18
         for character in text {
-            field.typeText(String(character))
+            tapKeyboardKey(character)
         }
         let typedCount = (field.value as? String)?.count ?? 0
         XCTAssertEqual(typedCount, text.count, "\(field) contains \(typedCount) of \(text.count) characters")
+    }
+
+    private func tapKeyboardKey(_ character: Character) {
+        let key = page.keyboardKey(character)
+        // switch letters / capitals / numbers / symbols until the key is shown
+        var switches = 0
+        while !key.exists && switches < Constants.maxKeyboardSwitches {
+            let switchKey = switches % 2 == 0 ? page.keyboardShiftKey : page.keyboardLayoutKey
+            if switchKey.exists {
+                switchKey.tap()
+            }
+            switches += 1
+        }
+        XCTAssertTrue(key.exists, "Keyboard key '\(character)' was not found")
+        key.tap()
     }
 
     private func dismissStrongPasswordPromptIfShown() {

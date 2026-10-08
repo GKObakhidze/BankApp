@@ -27,6 +27,8 @@ class EasyBankPage {
 
     // system keyboard and "Use Strong Password?" prompt
     let keyboard: XCUIElement
+    let keyboardShiftKey: XCUIElement
+    let keyboardLayoutKey: XCUIElement
     let strongPasswordCloseButton: XCUIElement
 
     // home
@@ -53,6 +55,8 @@ class EasyBankPage {
         registrationSubmitButton = app.buttons["registration.submit"]
 
         keyboard = app.keyboards.firstMatch
+        keyboardShiftKey = keyboard.buttons["shift"]
+        keyboardLayoutKey = keyboard.keys["more"]
         strongPasswordCloseButton = app.buttons["Close"]
 
         homeTab = app.tabBars.buttons["Home"]
@@ -61,5 +65,9 @@ class EasyBankPage {
 
         logoutAlert = app.alerts["Logging Out"]
         logoutConfirmButton = logoutAlert.buttons["Yes"]
+    }
+
+    func keyboardKey(_ character: Character) -> XCUIElement {
+        keyboard.keys[String(character)]
     }
 }

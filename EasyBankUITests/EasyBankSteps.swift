@@ -158,7 +158,10 @@ class EasyBankSteps {
         tap(field, Constants.screenTimeout)
         dismissStrongPasswordPromptIfShown()
         waitUntilExists(page.keyboard, Constants.screenTimeout)
-        field.typeText(text)
+        // one character at a time: the registration form re-renders after every change
+        for character in text {
+            field.typeText(String(character))
+        }
         let typedCount = (field.value as? String)?.count ?? 0
         XCTAssertEqual(typedCount, text.count, "\(field) contains \(typedCount) of \(text.count) characters")
     }

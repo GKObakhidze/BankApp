@@ -36,7 +36,8 @@ final class EasyBankSteps {
     @discardableResult
     func enterLoginPassword(_ password: String) -> EasyBankSteps {
         step("Entering the login password") {
-            enterText(password, into: page.loginPasswordField)
+            tap(page.loginPasswordField)
+            typeSecureText(password, into: page.loginPasswordField)
         }
     }
 
@@ -174,7 +175,15 @@ final class EasyBankSteps {
         if dismissStrongPasswordPromptIfPresent() {
             tap(field)
         }
-        field.typeText(password)
+        typeSecureText(password, into: field)
+    }
+
+    private func typeSecureText(_ password: String, into field: XCUIElement) {
+        for (index, character) in password.enumerated() {
+            field.typeText(String(character))
+            XCTAssertTrue(field.waitForValueLength(index + 1, timeout: EasyBankConstants.Timeout.element),
+                          "\(field) did not accept character \(index + 1) of the password")
+        }
     }
 
     private func dismissStrongPasswordPromptIfPresent() -> Bool {

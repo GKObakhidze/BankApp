@@ -1,8 +1,3 @@
-//
-//  EasyBankConstants.swift
-//  EasyBankUITests
-//
-
 import Foundation
 
 enum EasyBankConstants {
@@ -13,7 +8,7 @@ enum EasyBankConstants {
 
     enum Credentials {
         static let invalidFormatEmail = "invalid-email"
-        static let password = "Test1234!Pass"
+        static let password = "Test1234!"
         static let emailDomain = "example.com"
         static let registeredEmailPrefix = "user"
         static let unregisteredEmailPrefix = "ghost"

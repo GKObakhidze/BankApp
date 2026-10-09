@@ -13,6 +13,33 @@ class EasyBankSteps: EasyBankPage {
         element.typeText(text)
     }
 
+    func scrollAndTapSettingsRow(_ row: XCUIElement) {
+        var swipes = 0
+        while !row.waitForExistence(timeout: 2) && swipes < 3 {
+            settingsApp.swipeUp()
+            swipes += 1
+        }
+        waitAndTap(row)
+    }
+
+    func disablePasswordAutoFill() {
+        settingsApp.launch()
+        if !settingsAutoFillSwitch.waitForExistence(timeout: 3) {
+            if !settingsAutoFillRow.waitForExistence(timeout: 3) {
+                waitAndTap(settingsGeneralRow)
+            }
+            scrollAndTapSettingsRow(settingsAutoFillRow)
+        }
+        XCTAssertTrue(settingsAutoFillSwitch.waitForExistence(timeout: timeout), "AutoFill switch not found in Settings")
+        if settingsAutoFillSwitch.value as? String == "1" {
+            settingsAutoFillSwitch.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+            let switchedOff = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == '0'"), object: settingsAutoFillSwitch)
+            XCTAssertEqual(XCTWaiter.wait(for: [switchedOff], timeout: timeout), .completed, "AutoFill switch was not turned off")
+        }
+        settingsApp.terminate()
+        app.activate()
+    }
+
     func dismissStrongPasswordPromptIfPresent() -> Bool {
         for button in strongPasswordCloseButtons where button.waitForExistence(timeout: 2) {
             button.tap()

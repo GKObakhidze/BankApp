@@ -18,6 +18,7 @@ final class BankingFlowTests: EasyBankSteps {
     func testRegisterLogoutAndLogin() {
         let email = uniqueEmail()
 
+        disablePasswordAutoFill()
         openRegistrationForm()
         submitRegistration(email: email, password: testPassword)
         verifyHomeScreenDisplayed()

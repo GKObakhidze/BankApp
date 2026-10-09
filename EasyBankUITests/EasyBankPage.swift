@@ -18,10 +18,19 @@ class EasyBankPage: BaseClass {
     var springboard: XCUIApplication { XCUIApplication(bundleIdentifier: "com.apple.springboard") }
     var strongPasswordCloseButtons: [XCUIElement] { [app.buttons["Close"], springboard.buttons["Close"]] }
 
+    var settingsApp: XCUIApplication { XCUIApplication(bundleIdentifier: "com.apple.Preferences") }
+    var settingsGeneralRow: XCUIElement { settingsRow("General") }
+    var settingsAutoFillRow: XCUIElement { settingsRow("AutoFill & Passwords") }
+    var settingsAutoFillSwitch: XCUIElement { settingsApp.switches["AutoFill Passwords and Passkeys"] }
+
     var homeTabButton: XCUIElement { app.tabBars.buttons["Home"] }
     var sendMoneyButton: XCUIElement { app.buttons["home.sendMoney"] }
     var logoutButton: XCUIElement { app.buttons["home.logout"] }
 
     var logoutAlert: XCUIElement { app.alerts["Logging Out"] }
     var logoutConfirmButton: XCUIElement { logoutAlert.buttons["Yes"] }
+
+    private func settingsRow(_ label: String) -> XCUIElement {
+        settingsApp.descendants(matching: .any).matching(NSPredicate(format: "label == %@", label)).firstMatch
+    }
 }

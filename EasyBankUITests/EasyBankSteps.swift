@@ -88,14 +88,24 @@ final class EasyBankSteps {
                 file: file, line: line)
     }
 
-    /// A password field masks its value, so there is nothing reliable to read back: the number of
-    /// bullets a secure field reports differs between iOS versions. Type it and let the scenario's
-    /// own assertions prove that the credentials arrived.
+    /// A password field masks its value, so the check compares the number of bullets it reports
+    /// with the number of characters that were typed.
     private func typePassword(_ password: String, into element: XCUIElement, _ name: String,
+                              attempts: Int = 2,
                               file: StaticString = #filePath, line: UInt = #line) {
         tap(element, name, file: file, line: line)
         dismissStrongPasswordPromptIfPresent()
-        waitUntilHittable(element, name, file: file, line: line).typeText(password)
+        waitUntilHittable(element, name, file: file, line: line)
+
+        let masked = String(repeating: "•", count: password.count)
+        for _ in 1...attempts {
+            element.typeText(password)
+            if waitForValue(element, equals: masked) { return }
+            clearCurrentValue(of: element)
+        }
+
+        XCTFail("\(name) did not accept the typed value. Expected \(password.count) characters, found \(currentValue(of: element).count).",
+                file: file, line: line)
     }
 
     @discardableResult
@@ -217,12 +227,16 @@ final class EasyBankSteps {
     }
 
     /// Reusable flow: fill the registration form and submit it.
+    ///
+    /// The repeat field is filled before the password field. The registration form writes its
+    /// validation flags back while a field is being edited, and with the opposite order the
+    /// password field loses every keystroke but the last one.
     func register(email: String, password: String,
                   file: StaticString = #filePath, line: UInt = #line) {
         assertRegistrationFormDisplayed(file: file, line: line)
         enterRegistrationEmail(email, file: file, line: line)
-        enterRegistrationPassword(password, file: file, line: line)
         enterRegistrationRepeatPassword(password, file: file, line: line)
+        enterRegistrationPassword(password, file: file, line: line)
         submitRegistration(file: file, line: line)
     }
 

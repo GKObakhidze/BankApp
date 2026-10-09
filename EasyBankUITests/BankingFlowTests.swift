@@ -9,11 +9,13 @@ final class BankingFlowTests: BaseClass {
     }
 
     func testInvalidEmailFormat() {
+        steps.openLogin()
         steps.logIn(email: TestData.invalidEmail, password: TestData.password)
         steps.assertLoginError(contains: ErrorText.badlyFormatted)
     }
 
     func testInvalidCredentials() {
+        steps.openLogin()
         steps.logIn(email: TestData.uniqueEmail(prefix: "missing"), password: TestData.password)
         steps.assertLoginError(contains: ErrorText.invalidCredentials)
     }

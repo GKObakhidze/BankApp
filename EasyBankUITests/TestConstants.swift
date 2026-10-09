@@ -1,7 +1,7 @@
 import Foundation
 
 enum Timeout {
-    static let short: TimeInterval = 1
+    static let prompt: TimeInterval = 2
     static let medium: TimeInterval = 5
     static let standard: TimeInterval = 10
     static let long: TimeInterval = 15
@@ -25,6 +25,7 @@ enum FailureMessage {
     static let fieldNotFound = "Field not found"
     static let errorNotShown = "Error message not shown"
     static let mainScreenNotDisplayed = "Main screen not displayed"
+    static let loginFormNotDisplayed = "Login form not displayed after logout"
 
     static func wrongError(expected: String, actual: String) -> String {
         "Expected '\(expected)' but got '\(actual)'"

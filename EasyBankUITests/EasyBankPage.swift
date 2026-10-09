@@ -4,7 +4,6 @@ class EasyBankPage {
     let app: XCUIApplication
     init(_ app: XCUIApplication) { self.app = app }
 
-
     var onboardingLogin: XCUIElement { app.buttons["onboarding.login"] }
     var onboardingRegister: XCUIElement { app.buttons["onboarding.register"] }
 
@@ -22,6 +21,6 @@ class EasyBankPage {
     var logout: XCUIElement { app.buttons["home.logout"] }
     var logoutYes: XCUIElement { app.alerts["Logging Out"].buttons["Yes"] }
 
-    var strongPasswordClose: XCUIElement {
-    app.descendants(matching: .any).matching(NSPredicate(format: "label == 'Close'")).firstMatch}
+    var strongPasswordClose: XCUIElement { app.buttons["Close"] }
+    var keyboardReturn: XCUIElement { app.buttons["Return"] }
 }

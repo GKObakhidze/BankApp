@@ -71,13 +71,13 @@ final class EasyBankSteps {
     @discardableResult
     func enterRegistrationPassword(_ password: String, file: StaticString = #filePath, line: UInt = #line) -> Self {
         type(password, into: page.registrationPasswordField, name: "Registration password field",
-             dismissesStrongPasswordPrompt: true, file: file, line: line)
+             isNewPassword: true, file: file, line: line)
     }
 
     @discardableResult
     func enterRepeatPassword(_ password: String, file: StaticString = #filePath, line: UInt = #line) -> Self {
         type(password, into: page.registrationRepeatPasswordField, name: "Repeat password field",
-             dismissesStrongPasswordPrompt: true, file: file, line: line)
+             isNewPassword: true, file: file, line: line)
     }
 
     @discardableResult
@@ -124,7 +124,7 @@ final class EasyBankSteps {
     private func type(_ text: String,
                       into element: XCUIElement,
                       name: String,
-                      dismissesStrongPasswordPrompt: Bool = false,
+                      isNewPassword: Bool = false,
                       file: StaticString,
                       line: UInt) -> Self {
         guard waitUntilHittable(element) else {
@@ -132,10 +132,13 @@ final class EasyBankSteps {
             return self
         }
         element.tap()
-        if dismissesStrongPasswordPrompt {
+        if isNewPassword {
             dismissStrongPasswordPromptIfPresent()
+            enterByKeyTaps(text, into: element, name: name, file: file, line: line)
+        } else {
+            clearText(in: element)
+            element.typeText(text)
         }
-        enter(text, into: element, name: name, file: file, line: line)
         return self
     }
 
@@ -156,27 +159,15 @@ final class EasyBankSteps {
         return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
     }
 
-    private func enter(_ text: String, into element: XCUIElement, name: String, file: StaticString, line: UInt) {
-        if element.elementType == .secureTextField {
-            enterSecureText(text, into: element, name: name, file: file, line: line)
-        } else {
-            clearText(in: element)
-            element.typeText(text)
-        }
-    }
-
-    private func enterSecureText(_ text: String, into element: XCUIElement, name: String, file: StaticString, line: UInt) {
-        for _ in 0..<(text.count + 2) {
-            let typed = typedCount(in: element)
-            if typed == text.count { return }
-            if typed > text.count {
-                clearText(in: element)
-                continue
+    private func enterByKeyTaps(_ text: String, into element: XCUIElement, name: String, file: StaticString, line: UInt) {
+        for character in text {
+            let key = page.keyboardKey(String(character))
+            guard key.waitForExistence(timeout: timeout) else {
+                XCTFail("Keyboard key '\(character)' not found; new passwords must use lowercase letters only",
+                        file: file, line: line)
+                return
             }
-            element.typeText(String(text.dropFirst(typed)))
-            if typedCount(in: element) == typed {
-                element.tap()
-            }
+            key.tap()
         }
         XCTAssertEqual(typedCount(in: element), text.count,
                        "\(name) did not keep the typed password", file: file, line: line)

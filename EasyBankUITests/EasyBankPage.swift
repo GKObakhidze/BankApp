@@ -55,6 +55,10 @@ final class EasyBankPage {
 
     var strongPasswordCloseButton: XCUIElement { app.buttons[Label.strongPasswordClose] }
 
+    func keyboardKey(_ label: String) -> XCUIElement {
+        app.keyboards.keys[label]
+    }
+
     var keyboardReturnKey: XCUIElement {
         app.keyboards.buttons
             .matching(NSPredicate(format: "label ==[c] %@", Label.keyboardReturn))

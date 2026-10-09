@@ -1,12 +1,31 @@
 import XCTest
 
-final class BankingFlowTests: BaseClass {
-    func testAppLaunch() {
-        XCTAssertEqual(app.state, .runningForeground)
+final class BankingFlowTests: EasyBankSteps {
+    private let testPassword = "Qa!Test#2026"
 
-        let screenshot = XCTAttachment(screenshot: app.screenshot())
-        screenshot.name = "App Launch"
-        screenshot.lifetime = .keepAlways
-        add(screenshot)
+    func testLoginWithInvalidEmailFormatShowsError() {
+        openLoginForm()
+        submitLogin(email: "invalid-email", password: testPassword)
+        verifyLoginError(contains: "badly formatted")
+    }
+
+    func testLoginWithUnregisteredCredentialsShowsError() {
+        openLoginForm()
+        submitLogin(email: uniqueEmail(), password: testPassword)
+        verifyLoginError(contains: "malformed or has expired")
+    }
+
+    func testRegisterLogoutAndLogin() {
+        let email = uniqueEmail()
+
+        openRegistrationForm()
+        submitRegistration(email: email, password: testPassword)
+        verifyHomeScreenDisplayed()
+
+        logOut()
+        verifyLoginFormDisplayed()
+
+        submitLogin(email: email, password: testPassword)
+        verifyHomeScreenDisplayed()
     }
 }

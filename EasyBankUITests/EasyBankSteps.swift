@@ -5,7 +5,6 @@ final class EasyBankSteps {
     private let page: EasyBankPage
     private let timeout: TimeInterval = 10
     private let systemPromptTimeout: TimeInterval = 2
-    private let maxTypingAttempts = 3
 
     init(app: XCUIApplication) {
         page = EasyBankPage(app: app)
@@ -158,16 +157,34 @@ final class EasyBankSteps {
     }
 
     private func enter(_ text: String, into element: XCUIElement, name: String, file: StaticString, line: UInt) {
-        let isSecure = element.elementType == .secureTextField
-        for _ in 0..<maxTypingAttempts {
+        if element.elementType == .secureTextField {
+            enterSecureText(text, into: element, name: name, file: file, line: line)
+        } else {
             clearText(in: element)
             element.typeText(text)
-            let current = element.value as? String
-            if isSecure ? current?.count == text.count : current == text {
-                return
+        }
+    }
+
+    private func enterSecureText(_ text: String, into element: XCUIElement, name: String, file: StaticString, line: UInt) {
+        for _ in 0..<(text.count + 2) {
+            let typed = typedCount(in: element)
+            if typed == text.count { return }
+            if typed > text.count {
+                clearText(in: element)
+                continue
+            }
+            element.typeText(String(text.dropFirst(typed)))
+            if typedCount(in: element) == typed {
+                element.tap()
             }
         }
-        XCTFail("\(name) did not keep the typed text after \(maxTypingAttempts) attempts", file: file, line: line)
+        XCTAssertEqual(typedCount(in: element), text.count,
+                       "\(name) did not keep the typed password", file: file, line: line)
+    }
+
+    private func typedCount(in element: XCUIElement) -> Int {
+        guard let value = element.value as? String, value != element.placeholderValue else { return 0 }
+        return value.count
     }
 
     private func clearText(in element: XCUIElement) {

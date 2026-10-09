@@ -16,6 +16,13 @@ class EasyBankSteps {
         field.typeText(text)
     }
 
+    private func typeRevealed(_ text: String, into field: XCUIElement) {
+        XCTAssertTrue(field.waitForExistence(timeout: Timeout.standard), FailureMessage.fieldNotFound)
+        field.buttons["hide"].tap()
+        field.tap()
+        field.typeText(text)
+    }
+
     private func dismissKeyboard() {
         if page.keyboardReturn.exists { page.keyboardReturn.tap() }
     }
@@ -42,8 +49,8 @@ class EasyBankSteps {
         XCTAssertTrue(page.onboardingRegister.waitForExistence(timeout: Timeout.standard))
         page.onboardingRegister.tap()
         type(email, into: page.registerEmail)
-        type(password, into: page.registerPassword)
-        type(password, into: page.registerRepeatPassword)
+        typeRevealed(password, into: page.registerPassword)
+        typeRevealed(password, into: page.registerRepeatPassword)
         dismissKeyboard()
         page.registerSubmit.tap()
     }

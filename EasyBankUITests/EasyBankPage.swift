@@ -13,8 +13,8 @@ class EasyBankPage {
     var loginError: XCUIElement { app.staticTexts["login.error"] }
 
     var registerEmail: XCUIElement { app.textFields["registration.email"] }
-    var registerPassword: XCUIElement { app.secureTextFields["registration.password"] }
-    var registerRepeatPassword: XCUIElement { app.secureTextFields["registration.repeatPassword"] }
+    var registerPassword: XCUIElement { app.descendants(matching: .any).matching(identifier: "registration.password").firstMatch }
+    var registerRepeatPassword: XCUIElement { app.descendants(matching: .any).matching(identifier: "registration.repeatPassword").firstMatch }
     var registerSubmit: XCUIElement { app.buttons["registration.submit"] }
 
     var sendMoney: XCUIElement { app.buttons["home.sendMoney"] }

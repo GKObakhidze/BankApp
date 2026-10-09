@@ -7,10 +7,10 @@ class EasyBankSteps {
         page = EasyBankPage(app)
     }
 
-    private func type(_ text: String, into field: XCUIElement) {
+    private func type(_ text: String, into field: XCUIElement, dismissingStrongPassword: Bool = false) {
     XCTAssertTrue(field.waitForExistence(timeout: Timeout.standard), FailureMessage.fieldNotFound)
     field.tap()
-    if page.strongPasswordClose.waitForExistence(timeout: Timeout.short) {
+    if dismissingStrongPassword, page.strongPasswordClose.waitForExistence(timeout: Timeout.medium) {
         page.strongPasswordClose.tap()
     }
     field.typeText(text)
@@ -31,13 +31,13 @@ class EasyBankSteps {
 }
 
     func register(email: String, password: String) {
-        XCTAssertTrue(page.onboardingRegister.waitForExistence(timeout: Timeout.standard))
-        page.onboardingRegister.tap()
-        type(email, into: page.registerEmail)
-        type(password, into: page.registerPassword)
-        type(password, into: page.registerRepeatPassword)
-        page.registerSubmit.tap()
-    }
+    XCTAssertTrue(page.onboardingRegister.waitForExistence(timeout: Timeout.standard))
+    page.onboardingRegister.tap()
+    type(email, into: page.registerEmail)
+    type(password, into: page.registerPassword, dismissingStrongPassword: true)
+    type(password, into: page.registerRepeatPassword, dismissingStrongPassword: true)
+    page.registerSubmit.tap()
+}
 
     func assertMainScreen() {
     XCTAssertTrue(page.sendMoney.waitForExistence(timeout: Timeout.long), FailureMessage.mainScreenNotDisplayed)

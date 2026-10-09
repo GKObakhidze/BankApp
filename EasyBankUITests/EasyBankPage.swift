@@ -22,5 +22,6 @@ class EasyBankPage {
     var logout: XCUIElement { app.buttons["home.logout"] }
     var logoutYes: XCUIElement { app.alerts["Logging Out"].buttons["Yes"] }
 
-    var strongPasswordClose: XCUIElement { app.buttons["Close"] }
+    var strongPasswordClose: XCUIElement {
+    app.descendants(matching: .any).matching(NSPredicate(format: "label == 'Close'")).firstMatch}
 }

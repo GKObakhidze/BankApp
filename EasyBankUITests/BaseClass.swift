@@ -26,4 +26,9 @@ class BaseClass: XCTestCase {
         app.terminate()
         app.launch()
     }
+
+    override func tearDown() {
+        app.terminate()
+        super.tearDown()
+    }
 }

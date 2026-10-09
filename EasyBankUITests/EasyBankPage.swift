@@ -87,7 +87,7 @@ final class EasyBankPage {
     }
     //  System Prompt
 
-var strongPasswordClose: XCUIElement {
-    app.buttons["Close"].firstMatch
-}
+    var strongPasswordClose: XCUIElement {
+        app.buttons["Close"].firstMatch
+    }
 }

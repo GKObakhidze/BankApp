@@ -11,12 +11,19 @@ final class EasyBankSteps {
 
     // Reusable Helpers
 
-    private func tap(_ element: XCUIElement) {
-        XCTAssertTrue(
-            element.waitForExistence(timeout: 10),
-            "Element was not found"
+    private func waitUntilHittable(_ element: XCUIElement) {
+        XCTAssertTrue(element.waitForExistence(timeout: 10),
+                      "Element was not found: \(element)")
+        let ready = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "hittable == true AND enabled == true"),
+            object: element
         )
+        XCTAssertEqual(XCTWaiter.wait(for: [ready], timeout: 10), .completed,
+                       "Element was not ready for interaction: \(element)")
+    }
 
+    private func tap(_ element: XCUIElement) {
+        waitUntilHittable(element)
         element.tap()
     }
 
@@ -24,11 +31,7 @@ final class EasyBankSteps {
         _ text: String,
         into element: XCUIElement
     ) {
-        XCTAssertTrue(
-            element.waitForExistence(timeout: 10),
-            "Input field was not found"
-        )
-
+        waitUntilHittable(element)
         element.tap()
         element.typeText(text)
     }
@@ -37,16 +40,12 @@ final class EasyBankSteps {
         _ password: String,
         into element: XCUIElement
     ) {
-        XCTAssertTrue(
-            element.waitForExistence(timeout: 10),
-            "Password field was not found"
-        )
-
+        waitUntilHittable(element)
         element.tap()
 
         if page.strongPasswordClose.waitForExistence(timeout: 1) {
-            page.strongPasswordClose.tap()
-            element.tap()
+            tap(page.strongPasswordClose)
+            tap(element)
         }
 
         element.typeText(password)
@@ -151,6 +150,10 @@ final class EasyBankSteps {
 
     @discardableResult
     func verifyHomeScreen() -> Self {
+        XCTAssertTrue(
+            page.homeTab.waitForExistence(timeout: 15),
+            "Home tab was not displayed"
+        )
         XCTAssertTrue(
             page.sendMoney.waitForExistence(timeout: 15),
             "Home screen was not displayed"

@@ -124,18 +124,29 @@ final class EasyBankSteps {
 
     @discardableResult
     func enterRegistrationPassword(_ password: String) -> Self {
-        tap(page.registrationPasswordField, "Registration password field")
-        dismissStrongPasswordPromptIfShown()
-        page.registrationPasswordField.typeText(password)
+        enterSecureText(password, into: page.registrationPasswordField, "Registration password field")
         return self
     }
 
     @discardableResult
     func enterRegistrationRepeatPassword(_ password: String) -> Self {
-        tap(page.registrationRepeatPasswordField, "Registration repeat password field")
-        dismissStrongPasswordPromptIfShown()
-        page.registrationRepeatPasswordField.typeText(password)
+        enterSecureText(password, into: page.registrationRepeatPasswordField, "Registration repeat password field")
         return self
+    }
+
+    /// On iOS 18 the registration secure fields keep only the last typed character,
+    /// so the password is pasted in a single insertion and its length is verified.
+    private func enterSecureText(_ text: String, into element: XCUIElement, _ name: String,
+                                 file: StaticString = #filePath, line: UInt = #line) {
+        tap(element, name, file: file, line: line)
+        dismissStrongPasswordPromptIfShown()
+        UIPasteboard.general.string = text
+        element.press(forDuration: 1.0)
+        tap(page.pasteMenuItem, "Paste menu item", file: file, line: line)
+        let value = element.value as? String ?? ""
+        XCTAssertEqual(value.count, text.count,
+                       "\(name) contains \(value.count) characters instead of \(text.count)",
+                       file: file, line: line)
     }
 
 

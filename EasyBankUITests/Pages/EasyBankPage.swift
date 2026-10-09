@@ -35,6 +35,7 @@ final class EasyBankPage {
 
 
     var strongPasswordCloseButton: XCUIElement { app.buttons["Close"] }
+    var pasteMenuItem: XCUIElement { app.menuItems["Paste"] }
 
 
     var homeTabButton: XCUIElement { app.tabBars.buttons["Home"] }

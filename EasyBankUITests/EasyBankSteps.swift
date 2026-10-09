@@ -5,6 +5,7 @@ final class EasyBankSteps {
     private let page: EasyBankPage
     private let timeout: TimeInterval = 10
     private let systemPromptTimeout: TimeInterval = 2
+    private let maxTypingAttempts = 3
 
     init(app: XCUIApplication) {
         page = EasyBankPage(app: app)
@@ -135,8 +136,7 @@ final class EasyBankSteps {
         if dismissesStrongPasswordPrompt {
             dismissStrongPasswordPromptIfPresent()
         }
-        clearText(in: element)
-        element.typeText(text)
+        enter(text, into: element, name: name, file: file, line: line)
         return self
     }
 
@@ -155,6 +155,19 @@ final class EasyBankSteps {
             object: element
         )
         return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+    }
+
+    private func enter(_ text: String, into element: XCUIElement, name: String, file: StaticString, line: UInt) {
+        let isSecure = element.elementType == .secureTextField
+        for _ in 0..<maxTypingAttempts {
+            clearText(in: element)
+            element.typeText(text)
+            let current = element.value as? String
+            if isSecure ? current?.count == text.count : current == text {
+                return
+            }
+        }
+        XCTFail("\(name) did not keep the typed text after \(maxTypingAttempts) attempts", file: file, line: line)
     }
 
     private func clearText(in element: XCUIElement) {

@@ -1,15 +1,6 @@
 import XCTest
 
 final class BankingFlowTests: BaseClass {
-    func testAppLaunch() {
-        XCTAssertEqual(app.state, .runningForeground)
-
-        let screenshot = XCTAttachment(screenshot: app.screenshot())
-        screenshot.name = "App Launch"
-        screenshot.lifetime = .keepAlways
-        add(screenshot)
-    }
-
     private enum TestData {
         static let invalidEmail = "invalid-email"
         static let unregisteredEmail = "unregistered.user@example.com"

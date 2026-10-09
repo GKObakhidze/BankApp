@@ -86,16 +86,28 @@ final class EasyBankSteps {
     }
 
     @discardableResult
+    func showRegistrationPasswords() -> EasyBankSteps {
+        step("Making the registration passwords visible") {
+            tap(page.registrationPasswordVisibilityToggle)
+            tap(page.registrationRepeatPasswordVisibilityToggle)
+            XCTAssertTrue(page.registrationVisiblePasswordField.waitForExistence(timeout: EasyBankConstants.Timeout.element),
+                          "The registration password is still hidden")
+            XCTAssertTrue(page.registrationVisibleRepeatPasswordField.waitForExistence(timeout: EasyBankConstants.Timeout.element),
+                          "The repeated registration password is still hidden")
+        }
+    }
+
+    @discardableResult
     func enterRegistrationPassword(_ password: String) -> EasyBankSteps {
         step("Entering the registration password") {
-            typePassword(password, into: page.registrationPasswordField)
+            enterVerifiedText(password, into: page.registrationVisiblePasswordField)
         }
     }
 
     @discardableResult
     func repeatRegistrationPassword(_ password: String) -> EasyBankSteps {
         step("Repeating the registration password") {
-            typePassword(password, into: page.registrationRepeatPasswordField)
+            enterVerifiedText(password, into: page.registrationVisibleRepeatPasswordField)
         }
     }
 
@@ -109,6 +121,7 @@ final class EasyBankSteps {
     @discardableResult
     func register(email: String, password: String) -> EasyBankSteps {
         step("Registering a new account") {
+            showRegistrationPasswords()
             enterRegistrationEmail(email)
             enterRegistrationPassword(password)
             repeatRegistrationPassword(password)
@@ -170,12 +183,10 @@ final class EasyBankSteps {
         field.typeText(text)
     }
 
-    private func typePassword(_ password: String, into field: XCUIElement) {
-        tap(field)
-        if dismissStrongPasswordPromptIfPresent() {
-            tap(field)
-        }
-        typeSecureText(password, into: field)
+    private func enterVerifiedText(_ text: String, into field: XCUIElement) {
+        enterText(text, into: field)
+        XCTAssertTrue(field.waitForValue(text, timeout: EasyBankConstants.Timeout.element),
+                      "\(field) does not contain the typed text, got \"\(field.value as? String ?? "")\"")
     }
 
     private func typeSecureText(_ password: String, into field: XCUIElement) {
@@ -184,17 +195,5 @@ final class EasyBankSteps {
             XCTAssertTrue(field.waitForValueLength(index + 1, timeout: EasyBankConstants.Timeout.element),
                           "\(field) did not accept character \(index + 1) of the password")
         }
-    }
-
-    private func dismissStrongPasswordPromptIfPresent() -> Bool {
-        if page.strongPasswordCloseButton.waitForExistence(timeout: EasyBankConstants.Timeout.optionalPrompt) {
-            page.strongPasswordCloseButton.tap()
-            return true
-        }
-        if page.systemStrongPasswordCloseButton.exists {
-            page.systemStrongPasswordCloseButton.tap()
-            return true
-        }
-        return false
     }
 }

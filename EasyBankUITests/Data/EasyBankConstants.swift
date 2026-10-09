@@ -3,7 +3,6 @@ import Foundation
 enum EasyBankConstants {
     enum Timeout {
         static let element: TimeInterval = 15
-        static let optionalPrompt: TimeInterval = 2
     }
 
     enum Credentials {

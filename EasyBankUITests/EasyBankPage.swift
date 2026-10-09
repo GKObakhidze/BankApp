@@ -25,10 +25,14 @@ class EasyBankPage {
     let registrationRepeatPasswordField: XCUIElement
     let registrationSubmitButton: XCUIElement
 
+    // registration password "eye" buttons and the fields after the password is shown
+    let registrationPasswordShowButton: XCUIElement
+    let registrationRepeatPasswordShowButton: XCUIElement
+    let registrationVisiblePasswordField: XCUIElement
+    let registrationVisibleRepeatPasswordField: XCUIElement
+
     // system keyboard and "Use Strong Password?" prompt
     let keyboard: XCUIElement
-    let keyboardShiftKey: XCUIElement
-    let keyboardLayoutKey: XCUIElement
     let strongPasswordCloseButton: XCUIElement
 
     // home
@@ -54,9 +58,12 @@ class EasyBankPage {
         registrationRepeatPasswordField = app.secureTextFields["registration.repeatPassword"]
         registrationSubmitButton = app.buttons["registration.submit"]
 
+        registrationPasswordShowButton = registrationPasswordField.buttons.firstMatch
+        registrationRepeatPasswordShowButton = registrationRepeatPasswordField.buttons.firstMatch
+        registrationVisiblePasswordField = app.textFields["registration.password"]
+        registrationVisibleRepeatPasswordField = app.textFields["registration.repeatPassword"]
+
         keyboard = app.keyboards.firstMatch
-        keyboardShiftKey = keyboard.buttons["shift"]
-        keyboardLayoutKey = keyboard.keys["more"]
         strongPasswordCloseButton = app.buttons["Close"]
 
         homeTab = app.tabBars.buttons["Home"]
@@ -65,9 +72,5 @@ class EasyBankPage {
 
         logoutAlert = app.alerts["Logging Out"]
         logoutConfirmButton = logoutAlert.buttons["Yes"]
-    }
-
-    func keyboardKey(_ character: Character) -> XCUIElement {
-        keyboard.keys[String(character)]
     }
 }

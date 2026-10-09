@@ -91,13 +91,16 @@ class EasyBankSteps {
 
     @discardableResult
     func enterRegistrationPassword(_ password: String) -> EasyBankSteps {
-        typeSecureText(password, into: page.registrationPasswordField)
+        // show the password first: on iOS 18 the hidden registration field keeps only the last typed character
+        tap(page.registrationPasswordShowButton, Constants.screenTimeout)
+        typeText(password, into: page.registrationVisiblePasswordField)
         return self
     }
 
     @discardableResult
     func enterRepeatPassword(_ password: String) -> EasyBankSteps {
-        typeSecureText(password, into: page.registrationRepeatPasswordField)
+        tap(page.registrationRepeatPasswordShowButton, Constants.screenTimeout)
+        typeText(password, into: page.registrationVisibleRepeatPasswordField)
         return self
     }
 
@@ -158,27 +161,9 @@ class EasyBankSteps {
         tap(field, Constants.screenTimeout)
         dismissStrongPasswordPromptIfShown()
         waitUntilExists(page.keyboard, Constants.screenTimeout)
-        // tap keyboard keys like a user: typeText keeps only one character in the registration form on iOS 18
-        for character in text {
-            tapKeyboardKey(character)
-        }
+        field.typeText(text)
         let typedCount = (field.value as? String)?.count ?? 0
         XCTAssertEqual(typedCount, text.count, "\(field) contains \(typedCount) of \(text.count) characters")
-    }
-
-    private func tapKeyboardKey(_ character: Character) {
-        let key = page.keyboardKey(character)
-        // switch letters / capitals / numbers / symbols until the key is shown
-        var switches = 0
-        while !key.exists && switches < Constants.maxKeyboardSwitches {
-            let switchKey = switches % 2 == 0 ? page.keyboardShiftKey : page.keyboardLayoutKey
-            if switchKey.exists {
-                switchKey.tap()
-            }
-            switches += 1
-        }
-        XCTAssertTrue(key.exists, "Keyboard key '\(character)' was not found")
-        key.tap()
     }
 
     private func dismissStrongPasswordPromptIfShown() {

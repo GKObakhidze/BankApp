@@ -12,9 +12,6 @@ struct Constants {
     static let responseTimeout: TimeInterval = 15
     static let systemPromptTimeout: TimeInterval = 2
 
-    // keyboard
-    static let maxKeyboardSwitches = 6
-
     // test data
     static let invalidEmail = "invalid-email"
     static let unregisteredEmail = "not.registered.user@example.com"

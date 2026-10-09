@@ -1,12 +1,49 @@
 import XCTest
 
 final class BankingFlowTests: BaseClass {
-    func testAppLaunch() {
-        XCTAssertEqual(app.state, .runningForeground)
+    private lazy var easyBankSteps = EasyBankSteps(app: app)
 
-        let screenshot = XCTAttachment(screenshot: app.screenshot())
-        screenshot.name = "App Launch"
-        screenshot.lifetime = .keepAlways
-        add(screenshot)
+    func testInvalidEmailFormat() {
+        easyBankSteps
+        .openLogin()
+        .validateLoginScreen()
+        .enterEmail(Constants.invalidEmail)
+        .enterPassword(Constants.invalidPassword)
+        .submitLogin()
+        .validateLoginErrorContains(Constants.badlyFormattedError)
+        .validateLoginScreen()
+    }
+
+    func testInvalidLoginCredentials() {
+        let email = Constants.uniqueUnregisteredEmail()
+
+        easyBankSteps
+        .openLogin()
+        .validateLoginScreen()
+        .enterEmail(email)
+        .enterPassword(Constants.invalidPassword)
+        .submitLogin()
+        .validateLoginErrorContains(Constants.invalidCredentialsError)
+        .validateLoginScreen()
+
+    }
+
+    func testRegisterLogoutAndLogin() {
+        let email = Constants.uniqueRegistrationEmail()
+        let password = Constants.testPassword
+
+        easyBankSteps
+        .openRegistration()
+        .enterRegistrationEmail(email)
+        .enterRegistrationPassword(password)
+        .enterRepeatPassword(password)
+        .submitRegistration()
+        .validateHomeScreen()
+        .logout()
+        .validateLoginScreen()
+        .enterEmail(email)
+        .enterPassword(password)
+        .submitLogin()
+        .validateHomeScreen()
     }
 }

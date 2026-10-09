@@ -36,19 +36,29 @@ final class EasyBankSteps {
         element.typeText(text)
     }
 
-    private func enterRegistrationPasswordText(
+    private func enterVisiblePasswordText(
         _ password: String,
-        into element: XCUIElement
+        using visibilityButton: XCUIElement,
+        into visibleField: XCUIElement
     ) {
-        waitUntilHittable(element)
-        element.tap()
+        // The instructor permits visible test passwords. Toggle before
+        // focusing to avoid the system's secure-field password suggestion.
+        tap(visibilityButton)
+        waitUntilHittable(visibleField)
+        visibleField.tap()
 
         if page.strongPasswordClose.waitForExistence(timeout: 1) {
             tap(page.strongPasswordClose)
-            tap(element)
+            tap(visibleField)
         }
 
-        element.typeText(password)
+        visibleField.typeText(password)
+        let entered = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", password),
+            object: visibleField
+        )
+        XCTAssertEqual(XCTWaiter.wait(for: [entered], timeout: 5), .completed,
+                       "Password was not entered correctly")
     }
 
     // Onboarding
@@ -75,7 +85,11 @@ final class EasyBankSteps {
 
     @discardableResult
     func enterPassword(_ password: String) -> Self {
-        enterText(password, into: page.loginPassword)
+        enterVisiblePasswordText(
+            password,
+            using: page.loginPasswordVisibility,
+            into: page.visibleLoginPassword
+        )
         return self
     }
 
@@ -122,9 +136,10 @@ final class EasyBankSteps {
 
     @discardableResult
     func enterRegistrationPassword(_ password: String) -> Self {
-        enterRegistrationPasswordText(
+        enterVisiblePasswordText(
             password,
-            into: page.registrationPassword
+            using: page.registrationPasswordVisibility,
+            into: page.visibleRegistrationPassword
         )
 
         return self
@@ -132,9 +147,10 @@ final class EasyBankSteps {
 
     @discardableResult
     func enterRepeatPassword(_ password: String) -> Self {
-        enterRegistrationPasswordText(
+        enterVisiblePasswordText(
             password,
-            into: page.repeatPassword
+            using: page.repeatPasswordVisibility,
+            into: page.visibleRepeatPassword
         )
 
         return self

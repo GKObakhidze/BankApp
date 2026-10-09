@@ -36,6 +36,14 @@ final class EasyBankPage {
         app.secureTextFields["login.password"]
     }
 
+    var loginPasswordVisibility: XCUIElement {
+        loginPassword.buttons["hide"]
+    }
+
+    var visibleLoginPassword: XCUIElement {
+        app.textFields["login.password"]
+    }
+
     var loginSubmit: XCUIElement {
         app.buttons["login.submit"]
     }
@@ -56,6 +64,23 @@ final class EasyBankPage {
 
     var repeatPassword: XCUIElement {
         app.secureTextFields["registration.repeatPassword"]
+    }
+
+    // Each password field owns one visibility button in its right view.
+    var registrationPasswordVisibility: XCUIElement {
+        registrationPassword.buttons["hide"]
+    }
+
+    var repeatPasswordVisibility: XCUIElement {
+        repeatPassword.buttons["hide"]
+    }
+
+    var visibleRegistrationPassword: XCUIElement {
+        app.textFields["registration.password"]
+    }
+
+    var visibleRepeatPassword: XCUIElement {
+        app.textFields["registration.repeatPassword"]
     }
 
     var registrationSubmit: XCUIElement {

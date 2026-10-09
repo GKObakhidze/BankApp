@@ -14,10 +14,11 @@ class EasyBankPage: BaseClass {
 
     // Registration
     var registrationEmailField: XCUIElement { app.textFields["registration.email"] }
-    var registrationPasswordField: XCUIElement { app.secureTextFields["registration.password"] }
-    var registrationRepeatPasswordField: XCUIElement { app.secureTextFields["registration.repeatPassword"] }
+    var registrationPasswordToggle: XCUIElement { app.secureTextFields["registration.password"].buttons["hide"] }
+    var registrationRepeatPasswordToggle: XCUIElement { app.secureTextFields["registration.repeatPassword"].buttons["hide"] }
+    var registrationPasswordField: XCUIElement { app.textFields["registration.password"] }
+    var registrationRepeatPasswordField: XCUIElement { app.textFields["registration.repeatPassword"] }
     var registrationSubmitButton: XCUIElement { app.buttons["registration.submit"] }
-    var strongPasswordCloseButton: XCUIElement { app.buttons["Close"] }
 
     // Home
     var homeTabButton: XCUIElement { app.tabBars.buttons["Home"] }

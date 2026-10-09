@@ -2,8 +2,6 @@ import XCTest
 
 class EasyBankSteps: EasyBankPage {
 
-    // MARK: - Shared helpers
-
     func tapElement(_ element: XCUIElement) {
         XCTAssertTrue(element.waitForExistence(timeout: 10), "Element not found: \(element)")
         element.tap()
@@ -14,8 +12,6 @@ class EasyBankSteps: EasyBankPage {
         element.typeText(text)
     }
 
-    // MARK: - Onboarding
-
     func openLoginFromOnboarding() {
         tapElement(onboardingLoginButton)
     }
@@ -24,7 +20,6 @@ class EasyBankSteps: EasyBankPage {
         tapElement(onboardingRegisterButton)
     }
 
-    // MARK: - Login
 
     func enterLoginEmail(_ email: String) {
         enterText(email, into: loginEmailField)
@@ -55,13 +50,9 @@ class EasyBankSteps: EasyBankPage {
         XCTAssertTrue(found, "Error \"\(message)\" does not contain any of \(fragments)")
     }
 
-    // MARK: - Registration
-
-    func dismissStrongPasswordPromptIfPresent(for field: XCUIElement) {
-        if strongPasswordCloseButton.waitForExistence(timeout: 3) {
-            strongPasswordCloseButton.tap()
-            tapElement(field)
-        }
+    func showRegistrationPasswords() {
+        tapElement(registrationPasswordToggle)
+        tapElement(registrationRepeatPasswordToggle)
     }
 
     func enterRegistrationEmail(_ email: String) {
@@ -69,15 +60,11 @@ class EasyBankSteps: EasyBankPage {
     }
 
     func enterRegistrationPassword(_ password: String) {
-        tapElement(registrationPasswordField)
-        dismissStrongPasswordPromptIfPresent(for: registrationPasswordField)
-        registrationPasswordField.typeText(password)
+        enterText(password, into: registrationPasswordField)
     }
 
     func enterRegistrationRepeatPassword(_ password: String) {
-        tapElement(registrationRepeatPasswordField)
-        dismissStrongPasswordPromptIfPresent(for: registrationRepeatPasswordField)
-        registrationRepeatPasswordField.typeText(password)
+        enterText(password, into: registrationRepeatPasswordField)
     }
 
     func tapRegistrationSubmit() {
@@ -85,13 +72,13 @@ class EasyBankSteps: EasyBankPage {
     }
 
     func register(email: String, password: String) {
+        showRegistrationPasswords()
         enterRegistrationEmail(email)
         enterRegistrationPassword(password)
         enterRegistrationRepeatPassword(password)
         tapRegistrationSubmit()
     }
 
-    // MARK: - Home
 
     func assertMainScreenDisplayed() {
         XCTAssertTrue(sendMoneyButton.waitForExistence(timeout: 15), "Send Money button is not displayed")

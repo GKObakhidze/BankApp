@@ -4,7 +4,6 @@ final class EasyBankSteps {
 
     private let page: EasyBankPage
     private let timeout: TimeInterval = 10
-    private let systemPromptTimeout: TimeInterval = 2
 
     init(app: XCUIApplication) {
         page = EasyBankPage(app: app)
@@ -69,15 +68,22 @@ final class EasyBankSteps {
     }
 
     @discardableResult
+    func revealRegistrationPasswords(file: StaticString = #filePath, line: UInt = #line) -> Self {
+        tap(page.registrationPasswordVisibilityToggle, name: "Password visibility toggle", file: file, line: line)
+        return tap(page.registrationRepeatPasswordVisibilityToggle, name: "Repeat password visibility toggle",
+                   file: file, line: line)
+    }
+
+    @discardableResult
     func enterRegistrationPassword(_ password: String, file: StaticString = #filePath, line: UInt = #line) -> Self {
-        type(password, into: page.registrationPasswordField, name: "Registration password field",
-             isNewPassword: true, file: file, line: line)
+        type(password, into: page.registrationPasswordPlainField, name: "Registration password field",
+             file: file, line: line)
     }
 
     @discardableResult
     func enterRepeatPassword(_ password: String, file: StaticString = #filePath, line: UInt = #line) -> Self {
-        type(password, into: page.registrationRepeatPasswordField, name: "Repeat password field",
-             isNewPassword: true, file: file, line: line)
+        type(password, into: page.registrationRepeatPasswordPlainField, name: "Repeat password field",
+             file: file, line: line)
     }
 
     @discardableResult
@@ -89,6 +95,7 @@ final class EasyBankSteps {
     @discardableResult
     func register(email: String, password: String, file: StaticString = #filePath, line: UInt = #line) -> Self {
         enterRegistrationEmail(email, file: file, line: line)
+            .revealRegistrationPasswords(file: file, line: line)
             .enterRegistrationPassword(password, file: file, line: line)
             .enterRepeatPassword(password, file: file, line: line)
             .submitRegistration(file: file, line: line)
@@ -124,7 +131,6 @@ final class EasyBankSteps {
     private func type(_ text: String,
                       into element: XCUIElement,
                       name: String,
-                      isNewPassword: Bool = false,
                       file: StaticString,
                       line: UInt) -> Self {
         guard waitUntilHittable(element) else {
@@ -132,12 +138,10 @@ final class EasyBankSteps {
             return self
         }
         element.tap()
-        if isNewPassword {
-            dismissStrongPasswordPromptIfPresent()
-            enterByKeyTaps(text, into: element, name: name, file: file, line: line)
-        } else {
-            clearText(in: element)
-            element.typeText(text)
+        clearText(in: element)
+        element.typeText(text)
+        if element.elementType != .secureTextField {
+            XCTAssertEqual(element.value as? String, text, "\(name) did not keep the typed text", file: file, line: line)
         }
         return self
     }
@@ -159,36 +163,11 @@ final class EasyBankSteps {
         return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
     }
 
-    private func enterByKeyTaps(_ text: String, into element: XCUIElement, name: String, file: StaticString, line: UInt) {
-        for character in text {
-            let key = page.keyboardKey(String(character))
-            guard key.waitForExistence(timeout: timeout) else {
-                XCTFail("Keyboard key '\(character)' not found; new passwords must use lowercase letters only",
-                        file: file, line: line)
-                return
-            }
-            key.tap()
-        }
-        XCTAssertEqual(typedCount(in: element), text.count,
-                       "\(name) did not keep the typed password", file: file, line: line)
-    }
-
-    private func typedCount(in element: XCUIElement) -> Int {
-        guard let value = element.value as? String, value != element.placeholderValue else { return 0 }
-        return value.count
-    }
-
     private func clearText(in element: XCUIElement) {
         guard let current = element.value as? String,
               !current.isEmpty,
               current != element.placeholderValue else { return }
         element.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
-    }
-
-    private func dismissStrongPasswordPromptIfPresent() {
-        if page.strongPasswordCloseButton.waitForExistence(timeout: systemPromptTimeout) {
-            page.strongPasswordCloseButton.tap()
-        }
     }
 
     private func dismissKeyboard() {

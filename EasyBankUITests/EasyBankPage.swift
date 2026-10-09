@@ -23,7 +23,8 @@ final class EasyBankPage {
         static let homeTab = "Home"
         static let logoutAlertTitle = "Logging Out"
         static let logoutConfirm = "Yes"
-        static let strongPasswordClose = "Close"
+        static let passwordPlaceholder = "Password"
+        static let repeatPasswordPlaceholder = "Repeat Password"
         static let keyboardReturn = "return"
     }
 
@@ -46,6 +47,16 @@ final class EasyBankPage {
     var registrationRepeatPasswordField: XCUIElement { app.secureTextFields[ID.registrationRepeatPassword] }
     var registrationSubmitButton: XCUIElement { app.buttons[ID.registrationSubmit] }
 
+    var registrationPasswordVisibilityToggle: XCUIElement { registrationPasswordField.buttons.firstMatch }
+    var registrationRepeatPasswordVisibilityToggle: XCUIElement { registrationRepeatPasswordField.buttons.firstMatch }
+
+    var registrationPasswordPlainField: XCUIElement {
+        plainTextField(identifier: ID.registrationPassword, placeholder: Label.passwordPlaceholder)
+    }
+    var registrationRepeatPasswordPlainField: XCUIElement {
+        plainTextField(identifier: ID.registrationRepeatPassword, placeholder: Label.repeatPasswordPlaceholder)
+    }
+
     var homeTab: XCUIElement { app.tabBars.buttons[Label.homeTab] }
     var sendMoneyButton: XCUIElement { app.buttons[ID.homeSendMoney] }
     var logoutButton: XCUIElement { app.buttons[ID.homeLogout] }
@@ -53,15 +64,15 @@ final class EasyBankPage {
     var logoutAlert: XCUIElement { app.alerts[Label.logoutAlertTitle] }
     var logoutConfirmButton: XCUIElement { logoutAlert.buttons[Label.logoutConfirm] }
 
-    var strongPasswordCloseButton: XCUIElement { app.buttons[Label.strongPasswordClose] }
-
-    func keyboardKey(_ label: String) -> XCUIElement {
-        app.keyboards.keys[label]
-    }
-
     var keyboardReturnKey: XCUIElement {
         app.keyboards.buttons
             .matching(NSPredicate(format: "label ==[c] %@", Label.keyboardReturn))
+            .firstMatch
+    }
+
+    private func plainTextField(identifier: String, placeholder: String) -> XCUIElement {
+        app.textFields
+            .matching(NSPredicate(format: "identifier == %@ OR placeholderValue == %@", identifier, placeholder))
             .firstMatch
     }
 }

@@ -5,7 +5,7 @@ final class BankingFlowTests: BaseClass {
     private enum TestData {
         static let invalidEmail = "invalid-email"
         static let unregisteredEmail = "unregistered.user@example.com"
-        static let password = "securepass"
+        static let password = "Qa7xK9mP2z"
         static let badlyFormatted = "badly formatted"
         static let malformed = "malformed"
         static let hasExpired = "has expired"

@@ -126,7 +126,20 @@ final class EasyBankSteps {
         if dismissStrongPasswordPromptIfPresent() {
             tap(field, name: name)
         }
+        clearAutoFilledStrongPasswordIfPresent(in: field)
         field.typeText(text)
+    }
+
+    private func clearAutoFilledStrongPasswordIfPresent(in field: XCUIElement) {
+        let autoFilled = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value != nil AND value != '' AND value != placeholderValue"),
+            object: field
+        )
+        guard XCTWaiter().wait(for: [autoFilled], timeout: shortTimeout) == .completed else { return }
+
+        let currentValue = field.value as? String ?? ""
+        let deletes = String(repeating: XCUIKeyboardKey.delete.rawValue, count: max(currentValue.count, 1))
+        field.typeText(deletes)
     }
 
     private func tapSubmit(_ button: XCUIElement, name: String) {
@@ -146,7 +159,7 @@ final class EasyBankSteps {
         )
         _ = XCTWaiter().wait(for: [keyboardGone], timeout: shortTimeout)
     }
-
+    
     @discardableResult
     private func dismissStrongPasswordPromptIfPresent() -> Bool {
         tapFirstExisting(page.strongPasswordDismissButtons)

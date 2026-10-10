@@ -33,7 +33,7 @@ enum Constants {
         static let homeTab = "Home"
         static let logoutAlertTitle = "Logging Out"
         static let logoutConfirm = "Yes"
-        static let strongPasswordClose = "Close"
+        static let passwordVisibilityToggle = "hide"
         static let keyboardReturn = "Return"
     }
 

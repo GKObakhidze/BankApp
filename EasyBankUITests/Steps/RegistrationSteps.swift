@@ -14,13 +14,17 @@ final class RegistrationSteps: BaseSteps {
 
     @discardableResult
     func enterPassword(_ password: String) -> Self {
-        typePassword(password, into: page.registration.passwordField)
+        revealAndType(password,
+                      toggle: page.registration.passwordVisibilityToggle,
+                      field: page.registration.plainPasswordField)
         return self
     }
 
     @discardableResult
     func repeatPassword(_ password: String) -> Self {
-        typePassword(password, into: page.registration.repeatPasswordField)
+        revealAndType(password,
+                      toggle: page.registration.repeatPasswordVisibilityToggle,
+                      field: page.registration.plainRepeatPasswordField)
         return self
     }
 
@@ -39,5 +43,11 @@ final class RegistrationSteps: BaseSteps {
     @discardableResult
     func expectHome() -> HomeSteps {
         HomeSteps(app: app).assertDisplayed()
+    }
+
+    // A visible password field is a plain text field, so the system strong password prompt does not block typing
+    private func revealAndType(_ text: String, toggle: XCUIElement, field: XCUIElement) {
+        tap(toggle)
+        type(text, into: field)
     }
 }

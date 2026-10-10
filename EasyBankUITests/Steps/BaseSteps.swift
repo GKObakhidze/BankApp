@@ -25,16 +25,6 @@ class BaseSteps {
         field.typeText(text)
     }
 
-    // The strong password prompt appears on focus and swallows typed input, so it must be closed before typing
-    func typePassword(_ text: String, into field: XCUIElement) {
-        tap(field)
-        if page.system.strongPasswordCloseButton.waitForExistence(timeout: Constants.Timeout.systemPrompt) {
-            page.system.strongPasswordCloseButton.tap()
-            field.tap()
-        }
-        field.typeText(text)
-    }
-
     // The keyboard can cover the submit button on smaller screens
     func dismissKeyboardIfNeeded(before button: XCUIElement) {
         if button.waitForExistence(timeout: timeout), !button.isHittable, page.system.keyboardReturnKey.exists {

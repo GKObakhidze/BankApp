@@ -143,41 +143,6 @@ final class EasyBankSteps {
     }
 
     
-func enterRegistrationPassword(_ password: String) {
-    let field = page.registrationPasswordField
-
-    XCTAssertTrue(
-        field.waitForExistence(timeout: 10),
-        "Registration password field was not found"
-    )
-
-    field.tap()
-    print(page.app.debugDescription)
-    dismissStrongPasswordPromptIfPresent()
-
-    field.tap()
-    field.typeText(password)
-}
-
-
-   
-func enterRepeatPassword(_ password: String) {
-    let field = page.registrationRepeatPasswordField
-
-    XCTAssertTrue(
-        field.waitForExistence(timeout: 10),
-        "Repeat Password field was not found"
-    )
-
-    field.tap()
-    dismissStrongPasswordPromptIfPresent()
-
-    field.tap()
-    field.typeText(password)
-}
-
-
-    
 func dismissStrongPasswordPromptIfPresent() {
     let app = page.app
 

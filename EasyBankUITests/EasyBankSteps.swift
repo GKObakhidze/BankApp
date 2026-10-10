@@ -22,7 +22,6 @@ final class EasyBankSteps {
         tap(page.onboardingRegisterButton, name: "Onboarding 'Register' button")
     }
 
-
     func enterLoginEmail(_ email: String) {
         type(email, into: page.loginEmailField, name: "Login email field")
     }
@@ -56,7 +55,6 @@ final class EasyBankSteps {
         )
     }
 
-
     func enterRegistrationEmail(_ email: String) {
         type(email, into: page.registrationEmailField, name: "Registration email field")
     }
@@ -80,7 +78,6 @@ final class EasyBankSteps {
         submitRegistration()
     }
 
-
     func assertHomeDisplayed() {
         dismissSavePasswordPromptIfPresent()
         assertExists(page.sendMoneyButton, name: "Send Money button")
@@ -91,7 +88,6 @@ final class EasyBankSteps {
         assertExists(page.logoutAlert, name: "'Logging Out' alert")
         tap(page.logoutConfirmButton, name: "Alert 'Yes' button")
     }
-
 
     private func assertExists(_ element: XCUIElement, name: String) {
         XCTAssertTrue(
@@ -110,7 +106,6 @@ final class EasyBankSteps {
         XCTAssertEqual(result, .completed, "\(name) is not hittable")
     }
 
-
     private func tap(_ element: XCUIElement, name: String) {
         waitUntilHittable(element, name: name)
         element.tap()
@@ -121,25 +116,67 @@ final class EasyBankSteps {
         field.typeText(text)
     }
 
+
     private func typeIntoPasswordField(_ text: String, field: XCUIElement, name: String) {
         tap(field, name: name)
         if dismissStrongPasswordPromptIfPresent() {
             tap(field, name: name)
         }
-        clearAutoFilledStrongPasswordIfPresent(in: field)
-        field.typeText(text)
+
+        let expectedValue = String(repeating: "•", count: text.count)
+        let maxAttempts = 3
+
+        for attempt in 1...maxAttempts {
+            focusIfNeeded(field, name: name)
+            clearFieldIfNotEmpty(field)
+            field.typeText(text)
+
+            if waitForValue(of: field, toEqual: expectedValue) {
+                return
+            }
+            attachDiagnostics(named: "\(name) - attempt \(attempt) of \(maxAttempts)", field: field)
+        }
+
+        XCTFail("\(name) does not contain the typed password. Current value: '\(field.value ?? "nil")'")
     }
 
-    private func clearAutoFilledStrongPasswordIfPresent(in field: XCUIElement) {
-        let autoFilled = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "value != nil AND value != '' AND value != placeholderValue"),
+    private func focusIfNeeded(_ field: XCUIElement, name: String) {
+        let hasFocus = (field.value(forKey: "hasKeyboardFocus") as? Bool) ?? false
+        if !hasFocus {
+            tap(field, name: name)
+        }
+    }
+
+    private func clearFieldIfNotEmpty(_ field: XCUIElement) {
+        let currentValue = field.value as? String ?? ""
+        guard !currentValue.isEmpty, currentValue != field.placeholderValue else { return }
+        let deletes = String(repeating: XCUIKeyboardKey.delete.rawValue, count: currentValue.count + 1)
+        field.typeText(deletes)
+    }
+
+    private func waitForValue(of field: XCUIElement, toEqual expected: String) -> Bool {
+        let valueMatches = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", expected),
             object: field
         )
-        guard XCTWaiter().wait(for: [autoFilled], timeout: shortTimeout) == .completed else { return }
+        return XCTWaiter().wait(for: [valueMatches], timeout: shortTimeout) == .completed
+    }
 
-        let currentValue = field.value as? String ?? ""
-        let deletes = String(repeating: XCUIKeyboardKey.delete.rawValue, count: max(currentValue.count, 1))
-        field.typeText(deletes)
+    private func attachDiagnostics(named name: String, field: XCUIElement) {
+        print("[EasyBankSteps] \(name): field value = '\(field.value ?? "nil")'")
+        print(app.debugDescription)
+
+        XCTContext.runActivity(named: "Diagnostics: \(name)") { activity in
+            let screenshot = XCTAttachment(screenshot: app.screenshot())
+            screenshot.name = "\(name) - screen"
+            screenshot.lifetime = .keepAlways
+            activity.add(screenshot)
+
+            let tree = XCTAttachment(string: app.debugDescription)
+            tree.name = "\(name) - UI tree"
+            tree.lifetime = .keepAlways
+            activity.add(tree)
+        }
     }
 
     private func tapSubmit(_ button: XCUIElement, name: String) {
@@ -159,7 +196,7 @@ final class EasyBankSteps {
         )
         _ = XCTWaiter().wait(for: [keyboardGone], timeout: shortTimeout)
     }
-    
+
     @discardableResult
     private func dismissStrongPasswordPromptIfPresent() -> Bool {
         tapFirstExisting(page.strongPasswordDismissButtons)

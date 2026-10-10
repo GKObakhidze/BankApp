@@ -53,10 +53,8 @@ final class EasyBankSteps {
         enterText(email, into: page.registrationEmailField, elementName: nameRegistrationEmail)
         enterNewPassword(password, into: page.registrationPasswordField, elementName: nameRegistrationPassword)
         enterNewPassword(password, into: page.registrationRepeatPasswordField, elementName: nameRegistrationRepeatPassword)
-        if !page.registrationSubmitButton.isHittable {
-            hideKeyboardIfShown()
-        }
-        waitAndTap(page.registrationSubmitButton, elementName: nameRegistrationSubmit)
+        hideKeyboardIfShown()
+        tapRegisterButton()
     }
 
     func assertHomeDisplayed() {
@@ -68,6 +66,17 @@ final class EasyBankSteps {
         waitAndTap(page.homeLogoutButton, elementName: nameHomeLogout)
         waitUntilExists(page.logoutAlert, elementName: nameLogoutDialog)
         waitAndTap(page.logoutConfirmYesButton, elementName: nameLogoutYes)
+    }
+
+    private func tapRegisterButton() {
+        waitUntilExists(page.registrationSubmitButton, elementName: nameRegistrationSubmit)
+        if page.keyboardReturnKey.exists {
+            page.registrationSubmitButton
+                .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
+                .tap()
+        } else {
+            page.registrationSubmitButton.tap()
+        }
     }
 
     private func waitUntilExists(_ element: XCUIElement, elementName: String) {

@@ -142,39 +142,61 @@ final class EasyBankSteps {
         field.typeText(email)
     }
 
-    func enterRegistrationPassword(_ password: String) {
-        let field = page.registrationPasswordField
+    
+func enterRegistrationPassword(_ password: String) {
+    let field = page.registrationPasswordField
 
-        XCTAssertTrue(
-            field.waitForExistence(timeout: 10),
-            "Registration password field was not found"
-        )
+    XCTAssertTrue(
+        field.waitForExistence(timeout: 10),
+        "Registration password field was not found"
+    )
 
-        field.tap()
-        dismissStrongPasswordPromptIfPresent()
-        field.typeText(password)
+    field.tap()
+    print(page.app.debugDescription)
+    dismissStrongPasswordPromptIfPresent()
+
+    field.tap()
+    field.typeText(password)
+}
+
+
+   
+func enterRepeatPassword(_ password: String) {
+    let field = page.registrationRepeatPasswordField
+
+    XCTAssertTrue(
+        field.waitForExistence(timeout: 10),
+        "Repeat Password field was not found"
+    )
+
+    field.tap()
+    dismissStrongPasswordPromptIfPresent()
+
+    field.tap()
+    field.typeText(password)
+}
+
+
+    
+func dismissStrongPasswordPromptIfPresent() {
+    let app = page.app
+
+    let closeButton = app.buttons["Close"].firstMatch
+
+    if closeButton.exists && closeButton.isHittable {
+        closeButton.tap()
     }
 
-    func enterRepeatPassword(_ password: String) {
-        let field = page.registrationRepeatPasswordField
+    let useOwnPasswordButton = app.buttons[
+        "Use My Own Password"
+    ].firstMatch
 
-        XCTAssertTrue(
-            field.waitForExistence(timeout: 10),
-            "Repeat Password field was not found"
-        )
-
-        field.tap()
-        dismissStrongPasswordPromptIfPresent()
-        field.typeText(password)
+    if useOwnPasswordButton.exists &&
+       useOwnPasswordButton.isHittable {
+        useOwnPasswordButton.tap()
     }
+}
 
-    func dismissStrongPasswordPromptIfPresent() {
-        let closeButton = page.app.buttons["Close"]
-
-        if closeButton.exists && closeButton.isHittable {
-            closeButton.tap()
-        }
-    }
 
     func submitRegistration() {
         let button = page.registrationSubmitButton

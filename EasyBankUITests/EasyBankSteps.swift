@@ -63,42 +63,50 @@ final class EasyBankSteps {
     @discardableResult
     func enterRegistrationPassword(_ password: String) -> EasyBankSteps {
         XCTAssertTrue(
-            page.registrationPasswordField.waitForExistence(timeout: 10),
-            "Registration password field was not displayed"
-        )
-
-        page.registrationPasswordField.tap()
-        dismissStrongPasswordPromptIfPresent()
-
-        XCTAssertTrue(
-            page.registrationPasswordVisibilityButton.waitForExistence(timeout: 5),
+            page.registrationPasswordVisibilityButton.waitForExistence(timeout: 10),
             "Password visibility button was not displayed"
         )
 
+        // Make it a normal TextField BEFORE focusing it.
         page.registrationPasswordVisibilityButton.tap()
-        type(password, into: page.registrationPasswordField)
 
+        XCTAssertTrue(
+            page.registrationPasswordVisibleField.waitForExistence(timeout: 10),
+            "Visible registration password field was not displayed"
+        )
+
+        page.registrationPasswordVisibleField.tap()
+
+        if dismissStrongPasswordPromptIfPresent() {
+            page.registrationPasswordVisibleField.tap()
+        }
+
+        page.registrationPasswordVisibleField.typeText(password)
         return self
     }
 
     @discardableResult
     func enterRegistrationRepeatPassword(_ password: String) -> EasyBankSteps {
         XCTAssertTrue(
-            page.registrationRepeatPasswordField.waitForExistence(timeout: 10),
-            "Repeat password field was not displayed"
-        )
-
-        page.registrationRepeatPasswordField.tap()
-        dismissStrongPasswordPromptIfPresent()
-
-        XCTAssertTrue(
-            page.registrationRepeatPasswordVisibilityButton.waitForExistence(timeout: 5),
+            page.registrationRepeatPasswordVisibilityButton.waitForExistence(timeout: 10),
             "Repeat password visibility button was not displayed"
         )
 
+        // Same workaround: toggle before focusing.
         page.registrationRepeatPasswordVisibilityButton.tap()
-        type(password, into: page.registrationRepeatPasswordField)
 
+        XCTAssertTrue(
+            page.registrationRepeatPasswordVisibleField.waitForExistence(timeout: 10),
+            "Visible repeat-password field was not displayed"
+        )
+
+        page.registrationRepeatPasswordVisibleField.tap()
+
+        if dismissStrongPasswordPromptIfPresent() {
+            page.registrationRepeatPasswordVisibleField.tap()
+        }
+
+        page.registrationRepeatPasswordVisibleField.typeText(password)
         return self
     }
 
@@ -168,14 +176,18 @@ final class EasyBankSteps {
         element.tap()
     }
 
-    private func dismissStrongPasswordPromptIfPresent() {
+    @discardableResult
+    private func dismissStrongPasswordPromptIfPresent() -> Bool {
         if page.strongPasswordCloseButtonInApp.waitForExistence(timeout: 1) {
             page.strongPasswordCloseButtonInApp.tap()
-            return
+            return true
         }
 
         if page.strongPasswordCloseButtonInSpringboard.waitForExistence(timeout: 1) {
             page.strongPasswordCloseButtonInSpringboard.tap()
+            return true
         }
+
+        return false
     }
 }

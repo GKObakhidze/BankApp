@@ -8,6 +8,7 @@ final class EasyBankPage {
         self.app = app
     }
 
+    // Onboarding
     var onboardingLoginButton: XCUIElement {
         app.buttons["onboarding.login"]
     }
@@ -16,6 +17,7 @@ final class EasyBankPage {
         app.buttons["onboarding.register"]
     }
 
+    // Login
     var loginEmailField: XCUIElement {
         app.textFields["login.email"]
     }
@@ -32,34 +34,40 @@ final class EasyBankPage {
         app.staticTexts["login.error"]
     }
 
+    // Registration
     var registrationEmailField: XCUIElement {
         app.textFields["registration.email"]
     }
 
-    var registrationPasswordField: XCUIElement {
-        app.descendants(matching: .any)
-            .matching(identifier: "registration.password")
-            .firstMatch
+    var registrationPasswordSecureField: XCUIElement {
+        app.secureTextFields["registration.password"]
     }
 
-    var registrationRepeatPasswordField: XCUIElement {
-        app.descendants(matching: .any)
-            .matching(identifier: "registration.repeatPassword")
-            .firstMatch
+    var registrationPasswordVisibleField: XCUIElement {
+        app.textFields["registration.password"]
+    }
+
+    var registrationRepeatPasswordSecureField: XCUIElement {
+        app.secureTextFields["registration.repeatPassword"]
+    }
+
+    var registrationRepeatPasswordVisibleField: XCUIElement {
+        app.textFields["registration.repeatPassword"]
     }
 
     var registrationPasswordVisibilityButton: XCUIElement {
-        registrationPasswordField.buttons.firstMatch
+        registrationPasswordSecureField.buttons.firstMatch
     }
 
     var registrationRepeatPasswordVisibilityButton: XCUIElement {
-        registrationRepeatPasswordField.buttons.firstMatch
+        registrationRepeatPasswordSecureField.buttons.firstMatch
     }
 
     var registrationSubmitButton: XCUIElement {
         app.buttons["registration.submit"]
     }
 
+    // Strong password prompt
     var strongPasswordCloseButtonInApp: XCUIElement {
         app.buttons["Close"]
     }
@@ -68,6 +76,7 @@ final class EasyBankPage {
         springboard.buttons["Close"]
     }
 
+    // Home
     var sendMoneyButton: XCUIElement {
         app.buttons["home.sendMoney"]
     }
@@ -76,6 +85,7 @@ final class EasyBankPage {
         app.buttons["home.logout"]
     }
 
+    // Logout
     var logoutAlert: XCUIElement {
         app.alerts["Logging Out"]
     }

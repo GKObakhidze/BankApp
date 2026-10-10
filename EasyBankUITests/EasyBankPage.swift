@@ -20,6 +20,20 @@ final class EasyBankPage {
     var registrationRepeatPasswordField: XCUIElement { app.secureTextFields["registration.repeatPassword"] }
     var registrationSubmitButton: XCUIElement { app.buttons["registration.submit"] }
 
+    var registrationPasswordToggle: XCUIElement {
+        registrationPasswordField.buttons.firstMatch
+    }
+    var registrationRepeatPasswordToggle: XCUIElement {
+        registrationRepeatPasswordField.buttons.firstMatch
+    }
+
+    var registrationPasswordRevealedField: XCUIElement {
+        app.textFields["registration.password"]
+    }
+    var registrationRepeatPasswordRevealedField: XCUIElement {
+        app.textFields["registration.repeatPassword"]
+    }
+
     var homeTab: XCUIElement { app.tabBars.buttons["Home"] }
     var sendMoneyButton: XCUIElement { app.buttons["home.sendMoney"] }
     var logoutButton: XCUIElement { app.buttons["home.logout"] }

@@ -59,12 +59,17 @@ final class EasyBankSteps {
     func enterRegistrationEmail(_ email: String) {
         type(email, into: page.registrationEmailField)
     }
+
     func enterRegistrationPassword(_ password: String) {
-        type(password, into: page.registrationPasswordField, isPassword: true)
+        tap(page.registrationPasswordToggle)
+        type(password, into: page.registrationPasswordRevealedField)
     }
+
     func enterRegistrationRepeatPassword(_ password: String) {
-        type(password, into: page.registrationRepeatPasswordField, isPassword: true)
+        tap(page.registrationRepeatPasswordToggle)
+        type(password, into: page.registrationRepeatPasswordRevealedField)
     }
+
     func submitRegistration() { tap(page.registrationSubmitButton) }
 
 
@@ -120,7 +125,6 @@ final class EasyBankSteps {
                       "Home ჩანართი არ გამოჩნდა", file: file, line: line)
     }
 
-    // MARK: ტესტ-მონაცემები
     static func uniqueEmail() -> String {
         "uitest.\(UUID().uuidString.prefix(8).lowercased())@example.com"
     }

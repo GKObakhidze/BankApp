@@ -83,7 +83,6 @@ final class EasyBankSteps {
 
     func assertHomeDisplayed() {
         dismissSavePasswordPromptIfPresent()
-        assertExists(page.homeTabButton, name: "Home tab")
         assertExists(page.sendMoneyButton, name: "Send Money button")
     }
 

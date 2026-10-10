@@ -27,9 +27,6 @@ final class EasyBankPage {
     var registrationSubmitButton: XCUIElement { app.buttons["registration.submit"] }
     var registrationErrorLabel: XCUIElement { app.staticTexts["registration.error"] }
 
-
-
-    var homeTabButton: XCUIElement { app.tabBars.buttons["Home"] }
     var sendMoneyButton: XCUIElement { app.buttons["home.sendMoney"] }
     var logoutButton: XCUIElement { app.buttons["home.logout"] }
 

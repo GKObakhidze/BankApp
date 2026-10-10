@@ -1,11 +1,6 @@
-//
-//  EasyBankSteps.swift
-//  EasyBankUITests
-//
 
 import XCTest
 
-/// Steps: all UI actions, waits/synchronization, assertions and reusable flows.
 final class EasyBankSteps {
     private let app: XCUIApplication
     private let page: EasyBankPage
@@ -18,7 +13,6 @@ final class EasyBankSteps {
         self.page = EasyBankPage(app: app)
     }
 
-    // MARK: - Onboarding
 
     func openLoginFromOnboarding() {
         tap(page.onboardingLoginButton, name: "Onboarding 'Log In' button")
@@ -28,7 +22,6 @@ final class EasyBankSteps {
         tap(page.onboardingRegisterButton, name: "Onboarding 'Register' button")
     }
 
-    // MARK: - Login
 
     func enterLoginEmail(_ email: String) {
         type(email, into: page.loginEmailField, name: "Login email field")
@@ -63,7 +56,6 @@ final class EasyBankSteps {
         )
     }
 
-    // MARK: - Registration
 
     func enterRegistrationEmail(_ email: String) {
         type(email, into: page.registrationEmailField, name: "Registration email field")
@@ -88,7 +80,6 @@ final class EasyBankSteps {
         submitRegistration()
     }
 
-    // MARK: - Home and logout
 
     func assertHomeDisplayed() {
         dismissSavePasswordPromptIfPresent()
@@ -102,7 +93,6 @@ final class EasyBankSteps {
         tap(page.logoutConfirmButton, name: "Alert 'Yes' button")
     }
 
-    // MARK: - Synchronization helpers
 
     private func assertExists(_ element: XCUIElement, name: String) {
         XCTAssertTrue(
@@ -121,7 +111,6 @@ final class EasyBankSteps {
         XCTAssertEqual(result, .completed, "\(name) is not hittable")
     }
 
-    // MARK: - Action helpers
 
     private func tap(_ element: XCUIElement, name: String) {
         waitUntilHittable(element, name: name)
@@ -136,13 +125,11 @@ final class EasyBankSteps {
     private func typeIntoPasswordField(_ text: String, field: XCUIElement, name: String) {
         tap(field, name: name)
         if dismissStrongPasswordPromptIfPresent() {
-            // The prompt can take focus away from the field, so focus it again.
             tap(field, name: name)
         }
         field.typeText(text)
     }
 
-    /// The software keyboard can cover a submit button at the bottom of the form.
     private func tapSubmit(_ button: XCUIElement, name: String) {
         assertExists(button, name: name)
         if !button.isHittable {
@@ -161,7 +148,6 @@ final class EasyBankSteps {
         _ = XCTWaiter().wait(for: [keyboardGone], timeout: shortTimeout)
     }
 
-    /// Returns true when the system "Use Strong Password?" prompt was found and closed.
     @discardableResult
     private func dismissStrongPasswordPromptIfPresent() -> Bool {
         tapFirstExisting(page.strongPasswordDismissButtons)

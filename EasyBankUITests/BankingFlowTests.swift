@@ -1,6 +1,5 @@
 import XCTest
 
-/// Tests: prepare scenario data and orchestrate the scenario through Steps.
 final class BankingFlowTests: BaseClass {
     private var steps: EasyBankSteps!
 
@@ -9,7 +8,7 @@ final class BankingFlowTests: BaseClass {
         steps = EasyBankSteps(app: app)
     }
 
-    // MARK: - Test case 1
+
 
     func testLoginWithInvalidEmailFormatShowsError() {
         let invalidEmail = "invalid-email"
@@ -20,7 +19,6 @@ final class BankingFlowTests: BaseClass {
         steps.assertLoginErrorContains("badly formatted")
     }
 
-    // MARK: - Test case 2
 
     func testLoginWithUnregisteredAccountShowsError() {
         let unregisteredEmail = uniqueEmail(prefix: "unregistered")
@@ -31,7 +29,7 @@ final class BankingFlowTests: BaseClass {
         steps.assertLoginErrorContains("malformed or has expired")
     }
 
-    // MARK: - Test case 3
+
 
     func testRegisterLogoutAndLoginAgain() {
         let email = uniqueEmail(prefix: "easybank")
@@ -48,7 +46,7 @@ final class BankingFlowTests: BaseClass {
         steps.assertHomeDisplayed()
     }
 
-    // MARK: - Test data
+  
 
     private func uniqueEmail(prefix: String) -> String {
         let suffix = UUID().uuidString.prefix(8).lowercased()

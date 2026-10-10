@@ -14,12 +14,10 @@ final class EasyBankPage {
     var onboardingRegisterButton: XCUIElement { app.buttons["onboarding.register"] }
 
 
-
     var loginEmailField: XCUIElement { app.textFields["login.email"] }
     var loginPasswordField: XCUIElement { app.secureTextFields["login.password"] }
     var loginSubmitButton: XCUIElement { app.buttons["login.submit"] }
     var loginErrorLabel: XCUIElement { app.staticTexts["login.error"] }
-
 
     var registrationEmailField: XCUIElement { app.textFields["registration.email"] }
     var registrationPasswordField: XCUIElement { app.secureTextFields["registration.password"] }
@@ -27,15 +25,18 @@ final class EasyBankPage {
     var registrationSubmitButton: XCUIElement { app.buttons["registration.submit"] }
     var registrationErrorLabel: XCUIElement { app.staticTexts["registration.error"] }
 
+
     var sendMoneyButton: XCUIElement { app.buttons["home.sendMoney"] }
     var logoutButton: XCUIElement { app.buttons["home.logout"] }
-
 
     var logoutAlert: XCUIElement { app.alerts["Logging Out"] }
     var logoutConfirmButton: XCUIElement { logoutAlert.buttons["Yes"] }
 
-
     var keyboard: XCUIElement { app.keyboards.firstMatch }
+
+    var pasteMenuItems: [XCUIElement] {
+        [app.menuItems["Paste"], app.buttons["Paste"]]
+    }
 
     var strongPasswordDismissButtons: [XCUIElement] {
         ["Close", "Choose My Own Password"].flatMap { label in
@@ -43,7 +44,6 @@ final class EasyBankPage {
         }
     }
 
-    
     var savePasswordNotNowButtons: [XCUIElement] {
         [app.buttons["Not Now"], springboard.buttons["Not Now"]]
     }

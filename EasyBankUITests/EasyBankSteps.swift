@@ -1,4 +1,6 @@
 
+
+import UIKit
 import XCTest
 
 final class EasyBankSteps {
@@ -13,7 +15,6 @@ final class EasyBankSteps {
         self.page = EasyBankPage(app: app)
     }
 
-
     func openLoginFromOnboarding() {
         tap(page.onboardingLoginButton, name: "Onboarding 'Log In' button")
     }
@@ -21,6 +22,7 @@ final class EasyBankSteps {
     func openRegistrationFromOnboarding() {
         tap(page.onboardingRegisterButton, name: "Onboarding 'Register' button")
     }
+
 
     func enterLoginEmail(_ email: String) {
         type(email, into: page.loginEmailField, name: "Login email field")
@@ -116,7 +118,7 @@ final class EasyBankSteps {
         field.typeText(text)
     }
 
-
+   
     private func typeIntoPasswordField(_ text: String, field: XCUIElement, name: String) {
         tap(field, name: name)
         if dismissStrongPasswordPromptIfPresent() {
@@ -124,20 +126,40 @@ final class EasyBankSteps {
         }
 
         let expectedValue = String(repeating: "•", count: text.count)
-        let maxAttempts = 3
 
-        for attempt in 1...maxAttempts {
+    
+        let strategies: [(name: String, enter: () -> Void)] = [
+            ("typing", { field.typeText(text) }),
+            ("paste", { self.paste(text, into: field, name: name) }),
+            ("paste retry", { self.paste(text, into: field, name: name) })
+        ]
+
+        for (index, strategy) in strategies.enumerated() {
             focusIfNeeded(field, name: name)
             clearFieldIfNotEmpty(field)
-            field.typeText(text)
+            strategy.enter()
 
             if waitForValue(of: field, toEqual: expectedValue) {
                 return
             }
-            attachDiagnostics(named: "\(name) - attempt \(attempt) of \(maxAttempts)", field: field)
+            attachDiagnostics(
+                named: "\(name) - attempt \(index + 1) (\(strategy.name))",
+                field: field
+            )
         }
 
-        XCTFail("\(name) does not contain the typed password. Current value: '\(field.value ?? "nil")'")
+        XCTFail("\(name) does not contain the entered password. Current value: '\(field.value ?? "nil")'")
+    }
+
+    private func paste(_ text: String, into field: XCUIElement, name: String) {
+        UIPasteboard.general.string = text
+        focusIfNeeded(field, name: name)
+
+        field.tap()
+        if !tapFirstExisting(page.pasteMenuItems) {
+            field.press(forDuration: 1.0)
+            XCTAssertTrue(tapFirstExisting(page.pasteMenuItems), "'Paste' menu did not appear for \(name)")
+        }
     }
 
     private func focusIfNeeded(_ field: XCUIElement, name: String) {

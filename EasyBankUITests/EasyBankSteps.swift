@@ -242,4 +242,25 @@ func dismissStrongPasswordPromptIfPresent() {
             "Login screen was not displayed after logout"
         )
     }
+    func enterRegistrationPassword(_ password: String) {
+    let visibilityButton = page.registrationPasswordVisibilityButton
+    XCTAssertTrue(visibilityButton.waitForExistence(timeout: 10))
+    visibilityButton.tap()
+
+    let field = page.app.textFields["registration.password"]
+    XCTAssertTrue(field.waitForExistence(timeout: 10))
+    field.tap()
+    field.typeText(password)
+}
+
+func enterRepeatPassword(_ password: String) {
+    let visibilityButton = page.registrationRepeatPasswordVisibilityButton
+    XCTAssertTrue(visibilityButton.waitForExistence(timeout: 10))
+    visibilityButton.tap()
+
+    let field = page.app.textFields["registration.repeatPassword"]
+    XCTAssertTrue(field.waitForExistence(timeout: 10))
+    field.tap()
+    field.typeText(password)
+}
 }

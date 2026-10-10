@@ -81,4 +81,11 @@ final class EasyBankPage {
     var cancelLogoutButton: XCUIElement {
         logoutAlert.buttons["No"]
     }
+    var registrationPasswordVisibilityButton: XCUIElement {
+    registrationPasswordField.buttons["hide"]
+}
+
+var registrationRepeatPasswordVisibilityButton: XCUIElement {
+    registrationRepeatPasswordField.buttons["hide"]
+}
 }

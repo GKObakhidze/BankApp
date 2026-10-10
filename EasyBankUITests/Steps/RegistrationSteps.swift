@@ -14,15 +14,13 @@ final class RegistrationSteps: BaseSteps {
 
     @discardableResult
     func enterPassword(_ password: String) -> Self {
-        type(password, into: page.registration.passwordField)
-        dismissStrongPasswordPromptIfPresent()
+        typePassword(password, into: page.registration.passwordField)
         return self
     }
 
     @discardableResult
     func repeatPassword(_ password: String) -> Self {
-        type(password, into: page.registration.repeatPasswordField)
-        dismissStrongPasswordPromptIfPresent()
+        typePassword(password, into: page.registration.repeatPasswordField)
         return self
     }
 

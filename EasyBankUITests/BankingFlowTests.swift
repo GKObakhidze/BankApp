@@ -3,6 +3,10 @@ import XCTest
 final class BankingFlowTests: BaseClass {
     private var steps: EasyBankSteps!
 
+    private var uniqueEmail: String {
+        Constants.TestData.emailPrefix + UUID().uuidString.prefix(8).lowercased() + Constants.TestData.emailDomain
+    }
+
     override func setUp() {
         super.setUp()
         steps = EasyBankSteps(app: app)
@@ -18,12 +22,12 @@ final class BankingFlowTests: BaseClass {
     func testLoginWithUnregisteredCredentials() {
         steps.onboarding
             .openLogin()
-            .logIn(email: Constants.TestData.uniqueEmail(), password: Constants.TestData.validPassword)
+            .logIn(email: uniqueEmail, password: Constants.TestData.validPassword)
             .assertErrorContains(Constants.ErrorText.malformedOrExpired)
     }
 
     func testRegisterLogOutAndLogInAgain() {
-        let email = Constants.TestData.uniqueEmail()
+        let email = uniqueEmail
         let password = Constants.TestData.validPassword
 
         steps.onboarding

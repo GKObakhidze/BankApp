@@ -7,6 +7,6 @@ import XCTest
 
 final class HomePage: BasePage {
     var homeTab: XCUIElement { app.tabBars.buttons[Constants.Label.homeTab] }
-    var sendMoneyButton: XCUIElement { app.buttons[Constants.Identifier.homeSendMoney] }
-    var logoutButton: XCUIElement { app.buttons[Constants.Identifier.homeLogout] }
+    var sendMoneyButton: XCUIElement { app.buttons["home.sendMoney"] }
+    var logoutButton: XCUIElement { app.buttons["home.logout"] }
 }

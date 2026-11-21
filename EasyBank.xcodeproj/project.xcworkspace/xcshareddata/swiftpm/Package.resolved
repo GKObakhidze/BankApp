@@ -1,5 +1,5 @@
 {
-  "originHash" : "6076897ad3393da3dccd15ad3b61c543989f66c21e50997882027b15ed82eb22",
+  "originHash" : "0b564aa556a92adf50740be32ce7396c4615de7692df0dd16ada3e4c9f9f8c0c",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "3b62f154d00019ae29a71e9738800bb6f18b236d",
         "version" : "10.19.2"
+      }
+    },
+    {
+      "identity" : "e2e-studio-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/GKObakhidze/E2E-Studio-SDK.git",
+      "state" : {
+        "revision" : "cc266fd4cf4f3f8a985756f9212b3318991e3ee9",
+        "version" : "0.3.3"
       }
     },
     {
